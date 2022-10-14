@@ -9,11 +9,16 @@ export class VegsRepository implements IVegsRepository {
         this.stupidDatabase = [];
     }
 
-    createVeg({card, inactive}: ICreateVegDTO): void {
-        if (this.getByCard(card))
-            return;
+    public static getInstance(): VegsRepository {
+        if (!VegsRepository.INSTANCE) {
+            VegsRepository.INSTANCE = new VegsRepository()
+        }
 
-        const newVeg = new Veg({card, inactive});
+        return VegsRepository.INSTANCE
+    }
+
+    createVeg(props: ICreateVegDTO): void {
+        const newVeg = new Veg(props);
 
         this.stupidDatabase.push(newVeg);
     }

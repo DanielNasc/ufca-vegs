@@ -1,9 +1,8 @@
 import { Router } from "express";
+import { vegsRouter } from "./vegs.routes";
 
 const router = Router()
 
-router.get("/", (req, res) => {
-    res.send("Hello, World!");
-})
+router.use("/vegs", vegsRouter)
 
 export { router }
