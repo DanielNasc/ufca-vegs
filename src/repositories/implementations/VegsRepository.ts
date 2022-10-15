@@ -8,6 +8,10 @@ export class VegsRepository implements IVegsRepository {
 	constructor() {
 		this.stupidDatabase = [];
 	}
+	
+	listAllVegs(): Veg[] {
+		return [...this.stupidDatabase];
+	}
 
 	public static getInstance(): VegsRepository {
 		if (!VegsRepository.INSTANCE) {
@@ -23,8 +27,10 @@ export class VegsRepository implements IVegsRepository {
 		this.stupidDatabase.push(newVeg);
 	}
 
-	getByCard(card: number): Veg | undefined {
-		return this.stupidDatabase.find(veg => veg.card === card);
+	getIdByCard(card: number): string | undefined {
+		const i = this.stupidDatabase.findIndex(veg => veg.card === card);
+
+		return i > -1 ? this.stupidDatabase[i].id : undefined;
 	}
 
 	getById(id: string): Veg | undefined {
@@ -34,8 +40,7 @@ export class VegsRepository implements IVegsRepository {
 	removeVeg(id: string): void {
 		const index = this.stupidDatabase.findIndex(veg => veg.id === id);
 
-		if (index > -1)
-			this.stupidDatabase.splice(index, 1);
+		this.stupidDatabase.splice(index, 1);
 	}
 
 	countActiveVegs(): number {

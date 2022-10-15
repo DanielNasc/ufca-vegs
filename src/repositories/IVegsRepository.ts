@@ -11,8 +11,9 @@ export interface IUpdateCardPropsDTO {
 }
 
 export interface IVegsRepository {
+    listAllVegs(): Veg[]; // manda todos os vegs
     createVeg({ card, inactive }: ICreateVegDTO): void; // cria novo obj p um vegetariano
-    getByCard(card: number): Veg | undefined; 
+    getIdByCard(card: number): string | undefined; 
     getById(id: string): Veg | undefined;
     removeVeg(id: string): void; // remove o vegetariano do banco de dados
     countActiveVegs(): number; // conta quantos vegetarianos existem
