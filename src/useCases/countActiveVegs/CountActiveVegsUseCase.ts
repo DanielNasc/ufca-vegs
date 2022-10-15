@@ -1,9 +1,9 @@
 import { VegsRepository } from "../../repositories/implementations/VegsRepository";
 
 export class CountActiveVegsUseCase {
-    constructor(private vegsRepository: VegsRepository) {}
+	constructor(private vegsRepository: VegsRepository) {}
 
-    execute() {
-        return this.vegsRepository.countActiveVegs();
-    }
+	execute() {
+		return this.vegsRepository.countActiveVegs();
+	}
 }

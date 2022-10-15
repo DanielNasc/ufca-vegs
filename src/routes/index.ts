@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { vegsRouter } from "./vegs.routes";
 
-const router = Router()
+const router = Router();
 
-router.use("/vegs", vegsRouter)
+router.use("/vegs", vegsRouter);
 
-export { router }
+export { router };
