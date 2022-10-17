@@ -17,6 +17,6 @@ export class CreateVegUseCase {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		this.vegsRepository.createVeg({card, inactive: false, schedule});
+		this.vegsRepository.createVeg({card, schedule});
 	}
 }

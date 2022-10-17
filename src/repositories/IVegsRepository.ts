@@ -7,7 +7,6 @@ interface IReservation {
 
 export interface ICreateVegDTO {
     card: number;
-    inactive: boolean;
     schedule: IReservation[]
 }
 
@@ -22,7 +21,6 @@ export interface IVegsRepository {
     getIdByCard(card: number): string | undefined; 
     getById(id: string): Veg | undefined;
     removeVeg(id: string): void; // remove o vegetariano do banco de dados
-    countActiveVegs(): number; // conta quantos vegetarianos existem
-    changeInactive(id: string): void; // muda a propriedade inactive de um vegetariano
+    countActiveVegs(meal: "lunch" | "dinner", day: string): number; // conta quantos vegetarianos existem
     updateCard({ id, card }: IUpdateCardPropsDTO): void; // atualiza o numero do cartao de um veg
 }

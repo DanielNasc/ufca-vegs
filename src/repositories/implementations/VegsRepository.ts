@@ -43,15 +43,8 @@ export class VegsRepository implements IVegsRepository {
 		this.stupidDatabase.splice(index, 1);
 	}
 
-	countActiveVegs(): number {
-		return this.stupidDatabase.map(veg => veg.inactive === true).length;
-	}
-
-	changeInactive(id: string):void {
-		const veg = this.getById(id);
-
-		if (veg)
-			veg.inactive = !veg.inactive;
+	countActiveVegs(meal: "lunch" | "dinner", day: string): number {
+		return this.stupidDatabase.map(veg => veg.scheduleTable[day][meal]).length;
 	}
 
 	updateCard({ id, card }: IUpdateCardPropsDTO): void {
