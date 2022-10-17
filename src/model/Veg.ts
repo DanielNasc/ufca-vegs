@@ -1,18 +1,26 @@
 import { v4 as uuidV4 } from "uuid";
 
+interface IReservation {
+	day: "mon" | "tues" | "wed" | "thurs" | "fri";
+	meal: "lunch" | "dinner";
+}
+
 interface IVegProps {
     card: number;
     inactive: boolean;
+	schedule: IReservation[]
 }
 
-export class Veg {
+export class Veg implements IVegProps{
 	id: string;
-	card: number;
-	inactive: boolean;
+	card;
+	inactive;
+	schedule;
 
-	constructor({ card, inactive }: IVegProps) {
+	constructor({ card, inactive, schedule }: IVegProps) {
 		this.id = uuidV4();
 		this.card = card;
 		this.inactive = inactive;
+		this.schedule = schedule;
 	}
 }

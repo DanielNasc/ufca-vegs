@@ -5,9 +5,9 @@ export class CreateVegController {
 	constructor(private createVegUseCase: CreateVegUseCase) {}
 
 	handle(req: Request, res: Response) {
-		const { card } = req.body;
+		const { card, schedule } = req.body;
 
-		this.createVegUseCase.execute(parseInt(card));
+		this.createVegUseCase.execute({card: parseInt(card), schedule});
 
 		return res.status(201).send("Created");
 	}
