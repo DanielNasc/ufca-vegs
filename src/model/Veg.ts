@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from "uuid";
 
 interface IReservation {
-	day: "mon" | "tues" | "wed" | "thurs" | "fri";
+	day: "mon" | "tue" | "wed" | "thu" | "fri";
 	meal: "lunch" | "dinner";
 }
 
@@ -16,7 +16,7 @@ interface ScheduleTable {
 	}
 }
 
-const days = ["mon", "tues", "wed", "thurs", "fri"];
+const days = ["mon", "tue", "wed", "thur", "fri"];
 
 export class Veg {
 	id: string;

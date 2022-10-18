@@ -1,7 +1,7 @@
 import { Veg } from "../model/Veg";
 
 interface IReservation {
-	day: "mon" | "tues" | "wed" | "thurs" | "fri";
+	day: "mon" | "tue" | "wed" | "thu" | "fri";
 	meal: "lunch" | "dinner";
 }
 

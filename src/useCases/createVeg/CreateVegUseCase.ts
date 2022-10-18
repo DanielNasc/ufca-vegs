@@ -1,7 +1,7 @@
 import { VegsRepository } from "../../repositories/implementations/VegsRepository";
 
 interface IReservation {
-	day: "mon" | "tues" | "wed" | "thurs" | "fri";
+	day: "mon" | "tue" | "wed" | "thu" | "fri";
 	meal: "lunch" | "dinner";
 }
 
