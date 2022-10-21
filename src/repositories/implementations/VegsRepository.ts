@@ -3,16 +3,14 @@ import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRep
 
 export class VegsRepository implements IVegsRepository {
 	private stupidDatabase: Veg[];
+	private remainingVegs: number | null;
 	private static INSTANCE: VegsRepository;
 
 	constructor() {
 		this.stupidDatabase = [];
+		this.remainingVegs = null;
 	}
 	
-	listAllVegs(): Veg[] {
-		return [...this.stupidDatabase];
-	}
-
 	public static getInstance(): VegsRepository {
 		if (!VegsRepository.INSTANCE) {
 			VegsRepository.INSTANCE = new VegsRepository();
@@ -21,10 +19,16 @@ export class VegsRepository implements IVegsRepository {
 		return VegsRepository.INSTANCE;
 	}
 
-	createVeg(props: ICreateVegDTO): void {
+	listAllVegs(): Veg[] {
+		return [...this.stupidDatabase];
+	}
+
+	createVeg(props: ICreateVegDTO): Veg {
 		const newVeg = new Veg(props);
 
 		this.stupidDatabase.push(newVeg);
+
+		return newVeg;
 	}
 
 	getIdByCard(card: number): string | undefined {
@@ -43,8 +47,26 @@ export class VegsRepository implements IVegsRepository {
 		this.stupidDatabase.splice(index, 1);
 	}
 
-	countActiveVegs(meal: "lunch" | "dinner", day: string): number {
-		return this.stupidDatabase.map(veg => veg.scheduleTable[day][meal]).length;
+	initializeVegsCounter(meal: "lunch" | "dinner", day: string): void {
+		this.remainingVegs = this.stupidDatabase.filter(veg => veg.scheduleTable[day][meal] != false).length;
+	}
+
+	clearCounter(): void {
+		this.remainingVegs = null;
+	}	
+
+	countActiveVegs(): number | null {
+		return this.remainingVegs;
+	}
+
+	increaseCounter(): void {
+		if (this.remainingVegs)
+			this.remainingVegs++;
+	}
+
+	decreaseCounter(): void {
+		if (this.remainingVegs)
+			this.remainingVegs--;
 	}
 
 	updateCard({ id, card }: IUpdateCardPropsDTO): void {

@@ -1,11 +1,15 @@
 import { Server } from "socket.io";
 import http from "http"
+import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { getDayAndHour } from "../../utils/getDayAndHour";
+
+const vegsRepository = VegsRepository.getInstance();
 
 export class SocketIoService {
     private io: Server | undefined;
     private static INSTANCE: SocketIoService;
 
-    setUpSocket(srv: number | http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) {
+    setUpSocket(srv: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) {
         this.io = new Server(srv, {
             cors: {
                 origin: "http://127.0.0.1:5500"
@@ -15,7 +19,27 @@ export class SocketIoService {
         this.io.on("connect", (socket) => {
             console.log("user connected");
 
-            socket.on("one passed", () => this.broadcast("one passed"))
+            socket.on("one passed", () => {
+                vegsRepository.decreaseCounter()
+                this.broadcast("one passed")
+            })
+            socket.on("initialize counter", () => {
+                let meal: "lunch" | "dinner";
+                const {day, hour} = getDayAndHour();
+                
+                if (hour < 14)
+                    meal = "lunch";
+                else 
+                    meal = "dinner";
+
+                vegsRepository.initializeVegsCounter(meal, day);
+
+                this.broadcast("counter initialized");
+            })
+            socket.on("clear counter", () => {
+                vegsRepository.clearCounter();
+                this.broadcast("counter cleaned");
+            })
         })
     }
 

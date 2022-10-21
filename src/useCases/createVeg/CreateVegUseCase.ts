@@ -1,4 +1,5 @@
 import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { getDayAndHour } from "../../utils/getDayAndHour";
 
 interface IReservation {
 	day: "mon" | "tue" | "wed" | "thu" | "fri";
@@ -17,6 +18,12 @@ export class CreateVegUseCase {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		this.vegsRepository.createVeg({card, schedule});
+		const newVeg = this.vegsRepository.createVeg({card, schedule});
+		const {day, hour} = getDayAndHour();
+		const meal = hour < 14 ? "lunch": "dinner";
+
+		if (this.vegsRepository.countActiveVegs() !== null && newVeg.scheduleTable[day][meal]) {
+			this.vegsRepository.increaseCounter()
+		}
 	}
 }

@@ -17,10 +17,14 @@ export interface IUpdateCardPropsDTO {
 
 export interface IVegsRepository {
     listAllVegs(): Veg[]; // manda todos os vegs
-    createVeg(props: ICreateVegDTO): void; // cria novo obj p um vegetariano
+    createVeg(props: ICreateVegDTO): Veg; // cria novo obj p um vegetariano
     getIdByCard(card: number): string | undefined; 
     getById(id: string): Veg | undefined;
     removeVeg(id: string): void; // remove o vegetariano do banco de dados
-    countActiveVegs(meal: "lunch" | "dinner", day: string): number; // conta quantos vegetarianos existem
+    initializeVegsCounter(meal: "lunch" | "dinner", day: string): void
+    clearCounter(): void;
+    increaseCounter(): void;
+    decreaseCounter(): void;
+    countActiveVegs(): number | null; // conta quantos vegetarianos existem
     updateCard({ id, card }: IUpdateCardPropsDTO): void; // atualiza o numero do cartao de um veg
 }

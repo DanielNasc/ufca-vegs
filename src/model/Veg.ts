@@ -16,7 +16,7 @@ interface ScheduleTable {
 	}
 }
 
-const days = ["mon", "tue", "wed", "thur", "fri"];
+const days = ["mon", "tue", "wed", "thu", "fri"];
 
 export class Veg {
 	id: string;
