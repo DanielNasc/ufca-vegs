@@ -1,7 +1,8 @@
 import { v4 as uuidV4 } from "uuid";
+import { Days } from "../utils/types";
 
 interface IReservation {
-	day: "mon" | "tue" | "wed" | "thu" | "fri";
+	day: Days;
 	meal: "lunch" | "dinner";
 }
 

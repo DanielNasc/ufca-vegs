@@ -1,8 +1,9 @@
 import { VegsRepository } from "../../repositories/implementations/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
+import { Days } from "../../utils/types";
 
 interface IReservation {
-	day: "mon" | "tue" | "wed" | "thu" | "fri";
+	day: Days;
 	meal: "lunch" | "dinner";
 }
 
