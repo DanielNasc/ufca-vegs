@@ -1,4 +1,5 @@
 import { Veg } from "../../model/Veg";
+import { Days } from "../../utils/types";
 import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
 
 export class VegsRepository implements IVegsRepository {
@@ -47,7 +48,7 @@ export class VegsRepository implements IVegsRepository {
 		this.stupidDatabase.splice(index, 1);
 	}
 
-	initializeVegsCounter(meal: "lunch" | "dinner", day: string): void {
+	initializeVegsCounter(meal: "lunch" | "dinner", day: Days): void {
 		this.remainingVegs = this.stupidDatabase.filter(veg => veg.scheduleTable[day][meal] != false).length;
 	}
 

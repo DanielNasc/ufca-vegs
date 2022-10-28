@@ -10,14 +10,14 @@ interface IVegProps {
     card: number;
 	schedule: IReservation[]
 }
-interface ScheduleTable {
-	[key: string]: {
+type ScheduleTable = {
+	[key in Days]: {
 		lunch: boolean;
 		dinner: boolean;
 	}
 }
 
-const days = ["mon", "tue", "wed", "thu", "fri"];
+const days: Days[] = ["mon", "tue", "wed", "thu", "fri"];
 
 export class Veg {
 	id: string;
@@ -28,7 +28,7 @@ export class Veg {
 		this.id = uuidV4();
 		this.card = card;
 
-		this.scheduleTable = {};
+		this.scheduleTable = {} as ScheduleTable;
 		for (const day of days) {
 			this.scheduleTable[day] = {
 				lunch: false,
