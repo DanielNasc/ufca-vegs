@@ -4,12 +4,10 @@ import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRep
 
 export class VegsRepository implements IVegsRepository {
 	private stupidDatabase: Veg[];
-	private remainingVegs: number | null;
 	private static INSTANCE: VegsRepository;
 
 	constructor() {
 		this.stupidDatabase = [];
-		this.remainingVegs = null;
 	}
 	
 	public static getInstance(): VegsRepository {
@@ -46,28 +44,6 @@ export class VegsRepository implements IVegsRepository {
 		const index = this.stupidDatabase.findIndex(veg => veg.id === id);
 
 		this.stupidDatabase.splice(index, 1);
-	}
-
-	initializeVegsCounter(meal: "lunch" | "dinner", day: Days): void {
-		this.remainingVegs = this.stupidDatabase.filter(veg => veg.scheduleTable[day][meal] != false).length;
-	}
-
-	clearCounter(): void {
-		this.remainingVegs = null;
-	}	
-
-	countActiveVegs(): number | null {
-		return this.remainingVegs;
-	}
-
-	increaseCounter(): void {
-		if (this.remainingVegs)
-			this.remainingVegs++;
-	}
-
-	decreaseCounter(): void {
-		if (this.remainingVegs)
-			this.remainingVegs--;
 	}
 
 	updateCard({ id, card }: IUpdateCardPropsDTO): void {
