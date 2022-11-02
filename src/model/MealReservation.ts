@@ -1,10 +1,10 @@
 import { v4 as uuidV4 } from "uuid";
+import fs from "fs"
 
 interface IUnusualReservations {
     card: number;
     will_come: boolean;
 }
-
 
 export class MealReservation {
     readonly id: string;
@@ -52,18 +52,32 @@ export class MealReservation {
     }
 
     reset() {
+        const didntComeToday = this.willComeToday
+        
+        const fileName = `${new Date()}-${uuidV4()}.json`
+
+        if (!fs.existsSync("old"))
+            fs.mkdirSync("old")
+
+        fs.writeFile(`old/${fileName}`, 
+                    JSON.stringify({didntComeToday, unusualReservations: this.unusualReservations}),
+                    (err) => {
+                        if (err) throw err
+                    })
+
         this.unusualReservations = []
         this.willComeToday = [...this.fixedCards]
     }
 
     removeOne(card: number) {
         const index = this.willComeToday.indexOf(card)
-
+        
+        
         if (index != -1) {
             this.willComeToday.splice(index, 1);
             return true
         }
-
+        
         return false
     }
 }

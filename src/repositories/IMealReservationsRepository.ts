@@ -11,6 +11,6 @@ export interface IMealReservationsRepository {
     addNewCard(veg: Veg): void;
     reset({day, meal}: IMealAndDay): void;
     increaseCounter(): void;
-    decreaseCounter(): void;
+    decreaseCounter(card: number, { day, meal }: IMealAndDay): boolean;
     countActiveVegs(): number | null; // conta quantos vegetarianos irão comer
 }

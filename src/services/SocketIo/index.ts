@@ -22,9 +22,10 @@ export class SocketIoService {
         this.io.on("connect", (socket) => {
             console.log("user connected");
 
-            socket.on("one passed", () => {
-                mealReservationsRepository.decreaseCounter()
-                this.broadcast("one passed")
+            socket.on("one passed", (card) => {
+                const {day, hour} = getDayAndHour()
+                const meal = getMeal(hour)
+                mealReservationsRepository.decreaseCounter(Number(card), {day, meal}) && this.broadcast("one passed")
             })
             socket.on("initialize counter", () => {
                 const {day, hour} = getDayAndHour();

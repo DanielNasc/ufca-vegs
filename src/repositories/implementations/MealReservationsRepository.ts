@@ -57,7 +57,6 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     
     initializeVegsCounter({ day, meal }: IMealAndDay): void {
         this.stupidDatabase[day][meal].initializeWillComeToday();
-        console.log( this.stupidDatabase[day][meal].fixedCards);
         this.remainingVegs = this.stupidDatabase[day][meal].willComeToday.length;
 	}
 
@@ -85,8 +84,13 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         }
 	}
 
-	decreaseCounter(): void {
-		if (this.remainingVegs)
-			this.remainingVegs--;
+	decreaseCounter(card: number, { day, meal }: IMealAndDay): boolean {
+		if (!(this.remainingVegs && this.stupidDatabase[day][meal].removeOne(card))) {
+			return false
+        }
+
+        this.remainingVegs--;
+        
+        return true
 	}
 }
