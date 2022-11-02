@@ -1,9 +1,10 @@
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
 
 export class CountActiveVegsUseCase {
-	constructor(private vegsRepository: VegsRepository) {}
+	constructor(private mealReservationsRepository: MealReservationsRepository) {}
 
 	execute() {
-		return this.vegsRepository.countActiveVegs();
+		// numero de vegs que vão comer hj ou null
+		return this.mealReservationsRepository.countActiveVegs();
 	}
 }

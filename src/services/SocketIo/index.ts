@@ -1,9 +1,10 @@
 import { Server } from "socket.io";
 import http from "http"
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
+import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
+import { getMeal } from "../../utils/getMeal";
 
-const vegsRepository = VegsRepository.getInstance();
+const mealReservationsRepository = MealReservationsRepository.getInstance();
 
 export class SocketIoService {
     private io: Server | undefined;
@@ -16,28 +17,28 @@ export class SocketIoService {
             }
         })
 
+        mealReservationsRepository.initializeDatabase()
+
         this.io.on("connect", (socket) => {
             console.log("user connected");
 
             socket.on("one passed", () => {
-                vegsRepository.decreaseCounter()
+                mealReservationsRepository.decreaseCounter()
                 this.broadcast("one passed")
             })
             socket.on("initialize counter", () => {
-                let meal: "lunch" | "dinner";
                 const {day, hour} = getDayAndHour();
-                
-                if (hour < 14)
-                    meal = "lunch";
-                else 
-                    meal = "dinner";
+                const meal = getMeal(hour);
 
-                vegsRepository.initializeVegsCounter(meal, day);
+                mealReservationsRepository.initializeVegsCounter({meal, day});
 
                 this.broadcast("counter initialized");
             })
             socket.on("clear counter", () => {
-                vegsRepository.clearCounter();
+                const {day, hour} = getDayAndHour();
+                const meal = getMeal(hour);
+
+                mealReservationsRepository.reset({meal, day});
                 this.broadcast("counter cleaned");
             })
         })

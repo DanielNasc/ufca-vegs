@@ -1,3 +1,4 @@
+import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
 import { VegsRepository } from "../../repositories/implementations/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
@@ -14,18 +15,19 @@ interface ICreateVegProps {
 }
 
 export class CreateVegUseCase {
-	constructor(private vegsRepository: VegsRepository) {}
+	constructor(
+			private vegsRepository: VegsRepository,
+			private mealReservationsRepository: MealReservationsRepository
+			) {}
 
 	execute({card, schedule}: ICreateVegProps) {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		const newVeg = this.vegsRepository.createVeg({card, schedule});
-		const { day, hour } = getDayAndHour();
-		const meal = getMeal(hour);
+		const newVeg = this.vegsRepository.createVeg({card, schedule}); // cria novo vegetariano
+		this.mealReservationsRepository.addNewCard(newVeg) // adiciona o usuario à tabela de reservas
 
-		if (this.vegsRepository.countActiveVegs() !== null && newVeg.scheduleTable[day][meal]) {
-			this.vegsRepository.increaseCounter()
-		}
+		const {day, hour} = getDayAndHour();
+		return newVeg.scheduleTable[day][getMeal(hour)]
 	}
 }

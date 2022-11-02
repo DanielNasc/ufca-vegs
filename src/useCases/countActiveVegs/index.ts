@@ -1,7 +1,7 @@
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
 import { CountActiveVegsController } from "./CountActiveVegsController";
 import { CountActiveVegsUseCase } from "./CountActiveVegsUseCase";
 
-const vegsRepository = VegsRepository.getInstance();
-const countActiveVegsUseCase = new CountActiveVegsUseCase(vegsRepository);
+const mealReservationsRepository = MealReservationsRepository.getInstance();
+const countActiveVegsUseCase = new CountActiveVegsUseCase(mealReservationsRepository);
 export const countActiveVegsController = new CountActiveVegsController(countActiveVegsUseCase);

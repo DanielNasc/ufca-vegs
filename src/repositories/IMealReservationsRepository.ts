@@ -1,11 +1,15 @@
 import { Veg } from "../model/Veg";
 import { Days } from "../utils/types";
 
+export interface IMealAndDay {
+    day: Days;
+    meal: "lunch" | "dinner"
+}
 export interface IMealReservationsRepository {
     initializeDatabase(): void;
-    initializeVegsCounter(): void
+    initializeVegsCounter(props: IMealAndDay): void
     addNewCard(veg: Veg): void;
-    clearCounter(): void;
+    reset({day, meal}: IMealAndDay): void;
     increaseCounter(): void;
     decreaseCounter(): void;
     countActiveVegs(): number | null; // conta quantos vegetarianos irão comer

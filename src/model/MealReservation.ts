@@ -20,7 +20,8 @@ export class MealReservation {
     }
 
     addNewCard(card: number): void {
-        this.fixedCards.push(card);
+        this.fixedCards.push(card); // adiciona-se o cartão do novo usuário à lista fixa
+        this.willComeToday.push(card); // e também aos que virão hoje
     }
 
     addNewUnusualReservation({ card, will_come }: IUnusualReservations) {
@@ -34,15 +35,11 @@ export class MealReservation {
                 this.willComeToday.push(unusualReservation.card)
         }
         else {
-            const index = this.willComeToday.indexOf(unusualReservation.card)
-
-            if (index != -1) {
-                this.willComeToday.splice(index, 1);
-            }
+            this.removeOne(unusualReservation.card)
         }
     }
 
-    initializeWillComeTodat() {
+    initializeWillComeToday() {
         this.willComeToday = [...this.fixedCards]
 
         for (const unusualReservation of this.unusualReservations) {
@@ -52,5 +49,21 @@ export class MealReservation {
 
     countCards(): number {
         return this.willComeToday.length;
+    }
+
+    reset() {
+        this.unusualReservations = []
+        this.willComeToday = [...this.fixedCards]
+    }
+
+    removeOne(card: number) {
+        const index = this.willComeToday.indexOf(card)
+
+        if (index != -1) {
+            this.willComeToday.splice(index, 1);
+            return true
+        }
+
+        return false
     }
 }

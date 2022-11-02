@@ -1,10 +1,8 @@
+import { VegsRepository } from "./VegsRepository";
 import { MealReservation } from "../../model/MealReservation";
 import { Veg } from "../../model/Veg";
-import { getDayAndHour } from "../../utils/getDayAndHour";
-import { getMeal } from "../../utils/getMeal";
 import { Days } from "../../utils/types";
-import { IMealReservationsRepository } from "../IMealReservationsRepository";
-import { VegsRepository } from "./VegsRepository";
+import { IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
 
 type Reservation = {
     [k in ("lunch" | "dinner")]:  MealReservation
@@ -13,7 +11,6 @@ type Reservation = {
 type StupidDatabase = {
     [key in Days]: Reservation
 }
-
 
 const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
 const MEALS: Array<"lunch" | "dinner"> = ["lunch", "dinner"];
@@ -24,13 +21,12 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     private vegsRepository: VegsRepository;
     
     protected remainingVegs: number | null;
-    protected day: Days | undefined;
     
     constructor() {
         this.vegsRepository = VegsRepository.getInstance()
         this.stupidDatabase = {} as StupidDatabase;
         this.remainingVegs = null;
-
+        
         for (const day of DAYS) {
             this.stupidDatabase[day] = {} as Reservation
             for (const meal of MEALS) {
@@ -49,31 +45,34 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         const allVegs = this.vegsRepository.listAllVegs()
 
         for (const veg of allVegs) {
+            // podia ser só for ( const day of DAYS ) mas assim fica mo bonitão kkkkkk
+            // ( quando eu a versão final tiver pronta eu boto esse )
             for (const day of Object.keys(veg.scheduleTable) as Array<keyof (typeof veg.scheduleTable)>) {
                 for (const meal of MEALS) {
                     veg.scheduleTable[day][meal] && this.stupidDatabase[day][meal].addNewCard(veg.card)
                 }
             }
-        }   
+        }
     }
     
-    initializeVegsCounter(): void {
-        const { day, hour } = getDayAndHour();
-        const meal = getMeal(hour);
-
-        this.remainingVegs = this.stupidDatabase[day][meal].cards.length;
+    initializeVegsCounter({ day, meal }: IMealAndDay): void {
+        this.stupidDatabase[day][meal].initializeWillComeToday();
+        console.log( this.stupidDatabase[day][meal].fixedCards);
+        this.remainingVegs = this.stupidDatabase[day][meal].willComeToday.length;
 	}
 
     addNewCard(veg: Veg): void {
         for (const day of DAYS) {
             for (const meal of MEALS) {
+                // se o usuário tiver feito uma reserva para esse dia, seu cartão é adicionado à lista fixa do dia
                 veg.scheduleTable[day][meal] && this.stupidDatabase[day][meal].addNewCard(veg.card)
             }
         }
     }
 
-	clearCounter(): void {
+	reset({day, meal}: IMealAndDay): void {
 		this.remainingVegs = null;
+        this.stupidDatabase[day][meal].reset()
 	}	
 
 	countActiveVegs(): number | null {
