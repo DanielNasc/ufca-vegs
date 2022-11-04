@@ -2,7 +2,7 @@ import { VegsRepository } from "./VegsRepository";
 import { MealReservation } from "../../model/MealReservation";
 import { Veg } from "../../model/Veg";
 import { Days } from "../../utils/types";
-import { IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
+import { IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
 
 type Reservation = {
     [k in ("lunch" | "dinner")]:  MealReservation
@@ -56,6 +56,8 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     }
     
     initializeVegsCounter({ day, meal }: IMealAndDay): void {
+        if (this.remainingVegs) return
+
         this.stupidDatabase[day][meal].initializeWillComeToday();
         this.remainingVegs = this.stupidDatabase[day][meal].willComeToday.length;
 	}
@@ -69,6 +71,10 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         }
     }
 
+    addNewUnusualReservation({ card, will_come, meal, day}: IAddNewUnusualReservation): boolean {
+        return this.stupidDatabase[day][meal].addNewUnusualReservation({card, will_come})
+    }
+
 	reset({day, meal}: IMealAndDay): void {
 		this.remainingVegs = null;
         this.stupidDatabase[day][meal].reset()
@@ -79,7 +85,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 	}
 
 	increaseCounter(): void {
-		if (this.remainingVegs) {
+		if (this.remainingVegs != null) {
 			this.remainingVegs++;
         }
 	}
