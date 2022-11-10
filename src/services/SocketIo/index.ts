@@ -13,7 +13,7 @@ export class SocketIoService {
     setUpSocket(srv: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>) {
         this.io = new Server(srv, {
             cors: {
-                origin: "http://127.0.0.1:5500"
+                origin: "*"
             }
         })
 

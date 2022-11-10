@@ -11,6 +11,7 @@ interface IRequestReservation {
 
 interface ICreateVegProps {
 	card: number;
+	name: string;
 	schedule: IRequestReservation[];
 }
 
@@ -20,11 +21,11 @@ export class CreateVegUseCase {
 			private mealReservationsRepository: MealReservationsRepository
 			) {}
 
-	execute({card, schedule}: ICreateVegProps) {
+	execute({card, name, schedule}: ICreateVegProps) {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		const newVeg = this.vegsRepository.createVeg({card, schedule}); // cria novo vegetariano
+		const newVeg = this.vegsRepository.createVeg({card, name, schedule}); // cria novo vegetariano
 		this.mealReservationsRepository.addNewCard(newVeg) // adiciona o usuario à tabela de reservas
 
 		const {day, hour} = getDayAndHour();

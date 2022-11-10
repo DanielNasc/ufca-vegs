@@ -8,6 +8,7 @@ interface IReservation {
 
 interface IVegProps {
     card: number;
+	name: string;
 	schedule: IReservation[]
 }
 type ScheduleTable = {
@@ -22,11 +23,13 @@ const days: Days[] = ["mon", "tue", "wed", "thu", "fri"];
 export class Veg {
 	id: string;
 	card: number;
+	name: string;
 	scheduleTable: ScheduleTable;
 
-	constructor({ card, schedule }: IVegProps) {
+	constructor({ card, name, schedule }: IVegProps) {
 		this.id = uuidV4();
 		this.card = card;
+		this.name = name
 
 		this.scheduleTable = {} as ScheduleTable;
 		for (const day of days) {

@@ -8,6 +8,7 @@ interface IReservation {
 
 export interface ICreateVegDTO {
     card: number;
+    name: string;
     schedule: IReservation[]
 }
 
