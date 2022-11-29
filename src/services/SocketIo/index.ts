@@ -3,8 +3,10 @@ import http from "http"
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
 import { getMeal } from "../../utils/getMeal";
+import { VegsRepository } from "../../repositories/implementations/VegsRepository";
 
 const mealReservationsRepository = MealReservationsRepository.getInstance();
+const vegsRepository = VegsRepository.getInstance()
 
 export class SocketIoService {
     private io: Server | undefined;
@@ -40,6 +42,7 @@ export class SocketIoService {
                 const meal = getMeal(hour);
 
                 mealReservationsRepository.reset({meal, day});
+                vegsRepository.resetScheduledMeal({day, meal})
                 this.broadcast("counter cleaned");
             })
         })

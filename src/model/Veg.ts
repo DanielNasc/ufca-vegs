@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from "uuid";
 import { Days } from "../utils/types";
 
-interface IReservation {
+interface DayAndMealObj {
 	day: Days;
 	meal: "lunch" | "dinner";
 }
@@ -9,7 +9,7 @@ interface IReservation {
 interface IVegProps {
     card: number;
 	name: string;
-	schedule: IReservation[]
+	schedule: DayAndMealObj[]
 }
 type ScheduleTable = {
 	[key in Days]: {
@@ -25,12 +25,13 @@ export class Veg {
 	card: number;
 	name: string;
 	scheduleTable: ScheduleTable;
+	fixedScheduleTable: ScheduleTable;
 
 	constructor({ card, name, schedule }: IVegProps) {
 		this.id = uuidV4();
 		this.card = card;
 		this.name = name
-
+		
 		this.scheduleTable = {} as ScheduleTable;
 		for (const day of days) {
 			this.scheduleTable[day] = {
@@ -40,11 +41,17 @@ export class Veg {
 		}
 
 		this.createScheduleTable(schedule);
+		
+		this.fixedScheduleTable = {...this.scheduleTable}
 	}
 
-	createScheduleTable(schedule: IReservation[]) {
+	createScheduleTable(schedule: DayAndMealObj[]) {
 		for (const reservation of schedule) {
 			this.scheduleTable[reservation["day"]][reservation["meal"]] = true;
 		}
+	}
+
+	resetScheduleTable({ day, meal }: DayAndMealObj) {
+		this.scheduleTable[day][meal] = this.fixedScheduleTable[day][meal]
 	}
 }

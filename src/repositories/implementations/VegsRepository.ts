@@ -1,6 +1,6 @@
 import { Veg } from "../../model/Veg";
 import { Days } from "../../utils/types";
-import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
+import { ICreateVegDTO, IReservation, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
 
 export class VegsRepository implements IVegsRepository {
 	private stupidDatabase: Veg[];
@@ -36,13 +36,20 @@ export class VegsRepository implements IVegsRepository {
 		return i > -1 ? this.stupidDatabase[i].id : undefined;
 	}
 
-	getById(id: string): Veg | undefined {
+	getScheduleTable(card: number): { mon: { lunch: boolean; dinner: boolean; }; tue: { lunch: boolean; dinner: boolean; }; wed: { lunch: boolean; dinner: boolean; }; thu: { lunch: boolean; dinner: boolean; }; fri: { lunch: boolean; dinner: boolean; }; } | undefined{
+		const scheduletable = this.getById(this.getIdByCard(card))?.scheduleTable
+		
+		return scheduletable
+	}
+
+	getById(id: string | undefined): Veg | undefined {
+		if (!id) return undefined
 		return this.stupidDatabase.find(veg => veg.id === id);
 	}
 
 	removeVeg(id: string): void {
 		const index = this.stupidDatabase.findIndex(veg => veg.id === id);
-
+		
 		this.stupidDatabase.splice(index, 1);
 	}
 
@@ -53,5 +60,11 @@ export class VegsRepository implements IVegsRepository {
 			return;
 
 		veg.card = card;
+	}
+	
+	resetScheduledMeal(dayAndMeal: IReservation): void {
+		for (let veg of this.stupidDatabase) {
+			veg.resetScheduleTable(dayAndMeal)
+		}
 	}
 }

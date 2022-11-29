@@ -7,5 +7,5 @@ export function getDayAndHour() {
 
 
     // const pei: Days = "mon"
-    return {day, hour};
+    return {day: "mon", hour};
 }
