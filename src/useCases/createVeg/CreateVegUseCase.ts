@@ -29,6 +29,12 @@ export class CreateVegUseCase {
 		this.mealReservationsRepository.addNewCard(newVeg) // adiciona o usuario à tabela de reservas
 
 		const {day, hour} = getDayAndHour();
-		return newVeg.scheduleTable[day][getMeal(hour)]
+
+		const willComeToday = newVeg.scheduleTable[day][getMeal(hour)]
+
+		if (willComeToday)
+			this.mealReservationsRepository.increaseCounter()
+		
+		return willComeToday
 	}
 }
