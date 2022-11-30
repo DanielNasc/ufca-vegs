@@ -5,9 +5,9 @@ export class CreateUnusualReservationController {
     constructor(private createUnusualReservationUseCase: CreateUnusualReservationUseCase) {}
 
     handle(req: Request, res: Response) {
-        const { unusualReservations } = req.body
+        const { unusualReservations, card } = req.body
 
-        this.createUnusualReservationUseCase.execute(unusualReservations)
+        this.createUnusualReservationUseCase.execute({card, unusualReservations})
 
         return res.status(201).send("created")
     }

@@ -1,6 +1,6 @@
 import { Veg } from "../../model/Veg";
 import { Days } from "../../utils/types";
-import { ICreateVegDTO, IReservation, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
+import { IAddUnusualReservationProps, ICreateVegDTO, IReservation, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
 
 export class VegsRepository implements IVegsRepository {
 	private stupidDatabase: Veg[];
@@ -60,6 +60,12 @@ export class VegsRepository implements IVegsRepository {
 			return;
 
 		veg.card = card;
+	}
+
+	addUnusualReservation({card, day, meal, will_come}: IAddUnusualReservationProps): void {
+		const veg = this.getById(this.getIdByCard(card))
+
+		if (veg) veg.scheduleTable[day][meal] = will_come
 	}
 	
 	resetScheduledMeal(dayAndMeal: IReservation): void {

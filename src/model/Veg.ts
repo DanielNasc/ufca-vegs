@@ -42,7 +42,7 @@ export class Veg {
 
 		this.createScheduleTable(schedule);
 		
-		this.fixedScheduleTable = {...this.scheduleTable}
+		this.fixedScheduleTable = structuredClone(this.scheduleTable)
 	}
 
 	createScheduleTable(schedule: DayAndMealObj[]) {
