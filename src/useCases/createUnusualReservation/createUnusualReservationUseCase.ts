@@ -36,13 +36,13 @@ export class CreateUnusualReservationUseCase {
 
                 if (will_come) {
                     this.mealReservationsRepository.countActiveVegs() != null && (() => {
-                        this.mealReservationsRepository.increaseCounter()
+                        this.mealReservationsRepository.upateCounter({day, meal})
                         socketIoService.broadcast("created");
                     })()
                 }
                 else {
                     this.mealReservationsRepository.countActiveVegs() != null && (() => {
-                        this.mealReservationsRepository.decreaseCounter(card, {day, meal})
+                        this.mealReservationsRepository.removeCardFromToday(card, {day, meal})
                         socketIoService.broadcast("one passed")
                     })()
                 }

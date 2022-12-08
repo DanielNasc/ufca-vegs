@@ -27,7 +27,7 @@ export class SocketIoService {
             socket.on("one passed", (card) => {
                 const {day, hour} = getDayAndHour()
                 const meal = getMeal(hour)
-                mealReservationsRepository.decreaseCounter(Number(card), {day, meal}) && this.broadcast("one passed")
+                mealReservationsRepository.removeCardFromToday(Number(card), {day, meal}) && this.broadcast("one passed")
             })
             socket.on("initialize counter", () => {
                 const {day, hour} = getDayAndHour();

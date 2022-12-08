@@ -90,6 +90,21 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         }
 	}
 
+    upateCounter({ day, meal }: IMealAndDay): void {
+        if (this.remainingVegs != null) {
+            this.remainingVegs = this.stupidDatabase[day][meal].countCards()
+        }
+    }
+
+    removeCardFromToday(card: number, { day, meal }: IMealAndDay): boolean {
+        if (!(this.remainingVegs && this.stupidDatabase[day][meal].removeOne(card))) {
+            this.upateCounter({meal, day})
+			return false
+        }
+
+        return true
+    }
+
 	decreaseCounter(card: number, { day, meal }: IMealAndDay): boolean {
 		if (!(this.remainingVegs && this.stupidDatabase[day][meal].removeOne(card))) {
 			return false

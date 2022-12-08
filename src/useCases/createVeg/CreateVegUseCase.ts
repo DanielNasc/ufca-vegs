@@ -33,7 +33,7 @@ export class CreateVegUseCase {
 		const willComeToday = newVeg.scheduleTable[day][getMeal(hour)]
 
 		if (willComeToday)
-			this.mealReservationsRepository.increaseCounter()
+			this.mealReservationsRepository.upateCounter({meal: getMeal(hour), day})
 		
 		return willComeToday
 	}
