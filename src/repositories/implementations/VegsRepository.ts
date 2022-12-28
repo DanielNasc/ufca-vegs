@@ -1,6 +1,5 @@
 import { Veg } from "../../model/Veg";
-import { Days } from "../../utils/types";
-import { IAddUnusualReservationProps, ICreateVegDTO, IReservation, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
+import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
 
 export class VegsRepository implements IVegsRepository {
 	private stupidDatabase: Veg[];
@@ -22,24 +21,18 @@ export class VegsRepository implements IVegsRepository {
 		return [...this.stupidDatabase];
 	}
 
-	createVeg(props: ICreateVegDTO): Veg {
+	createVeg(props: ICreateVegDTO): string {
 		const newVeg = new Veg(props);
 
 		this.stupidDatabase.push(newVeg);
 
-		return newVeg;
+		return newVeg.id;
 	}
 
 	getIdByCard(card: number): string | undefined {
 		const i = this.stupidDatabase.findIndex(veg => veg.card === card);
 
 		return i > -1 ? this.stupidDatabase[i].id : undefined;
-	}
-
-	getScheduleTable(card: number): { mon: { lunch: boolean; dinner: boolean; }; tue: { lunch: boolean; dinner: boolean; }; wed: { lunch: boolean; dinner: boolean; }; thu: { lunch: boolean; dinner: boolean; }; fri: { lunch: boolean; dinner: boolean; }; } | undefined{
-		const scheduletable = this.getById(this.getIdByCard(card))?.scheduleTable
-		
-		return scheduletable
 	}
 
 	getById(id: string | undefined): Veg | undefined {
@@ -60,17 +53,5 @@ export class VegsRepository implements IVegsRepository {
 			return;
 
 		veg.card = card;
-	}
-
-	addUnusualReservation({card, day, meal, will_come}: IAddUnusualReservationProps): void {
-		const veg = this.getById(this.getIdByCard(card))
-
-		if (veg) veg.scheduleTable[day][meal] = will_come
-	}
-	
-	resetScheduledMeal(dayAndMeal: IReservation): void {
-		for (let veg of this.stupidDatabase) {
-			veg.resetScheduleTable(dayAndMeal)
-		}
 	}
 }

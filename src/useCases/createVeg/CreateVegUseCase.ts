@@ -25,15 +25,22 @@ export class CreateVegUseCase {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		const newVeg = this.vegsRepository.createVeg({card, name, schedule}); // cria novo vegetariano
-		this.mealReservationsRepository.addNewCard(newVeg) // adiciona o usuario à tabela de reservas
-
+		const newVegId = this.vegsRepository.createVeg({card, name}); // cria novo vegetariano
 		const {day, hour} = getDayAndHour();
+		const meal = getMeal(hour);
 
-		const willComeToday = newVeg.scheduleTable[day][getMeal(hour)]
+		let willComeToday = false;
 
-		if (willComeToday)
-			this.mealReservationsRepository.upateCounter({meal: getMeal(hour), day})
+		for (const reservation of schedule) {
+			this.mealReservationsRepository.addNewReservation({
+				id: newVegId,
+				meal: reservation.meal,
+				day: reservation.day
+			})
+
+			if (reservation.day === day && reservation.meal === meal)
+				willComeToday = true;
+		}
 		
 		return willComeToday
 	}

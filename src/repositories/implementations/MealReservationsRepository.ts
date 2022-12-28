@@ -2,7 +2,7 @@ import { VegsRepository } from "./VegsRepository";
 import { MealReservation } from "../../model/MealReservation";
 import { Veg } from "../../model/Veg";
 import { Days } from "../../utils/types";
-import { IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
+import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
 
 type Reservation = {
     [k in ("lunch" | "dinner")]:  MealReservation
@@ -62,13 +62,8 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         this.remainingVegs = this.stupidDatabase[day][meal].willComeToday.length;
 	}
 
-    addNewCard(veg: Veg): void {
-        for (const day of DAYS) {
-            for (const meal of MEALS) {
-                // se o usuário tiver feito uma reserva para esse dia, seu cartão é adicionado à lista fixa do dia
-                veg.scheduleTable[day][meal] && this.stupidDatabase[day][meal].addNewCard(veg.card)
-            }
-        }
+    addNewReservation({ day, id, meal } : IAddNewReservation): void {
+        this.stupidDatabase[day][meal].addNewCard(id);
     }
 
     addNewUnusualReservation({ card, will_come, meal, day}: IAddNewUnusualReservation): boolean {
