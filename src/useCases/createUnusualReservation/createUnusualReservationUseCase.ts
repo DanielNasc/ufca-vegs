@@ -18,32 +18,32 @@ const socketIoService = SocketIoService.getInstance()
 
 export class CreateUnusualReservationUseCase {
     constructor( private mealReservationsRepository: MealReservationsRepository,
-                 private vegsRepository: VegsRepository) {}
+                private vegsRepository: VegsRepository ) {}
 
     execute({card, unusualReservations}: IRequestUnusualReservation) {
         const { day: today, hour } = getDayAndHour()
         const curr_meal = getMeal(hour)
+        const user_id = this.vegsRepository.getIdByCard(card)
+
+        if (!user_id) return
 
         for (const unusualReservation of unusualReservations) {
             const { day, meal, will_come } = unusualReservation;
-            this.vegsRepository.addUnusualReservation({card, day, meal, will_come})
             
             if (
-                this.mealReservationsRepository.addNewUnusualReservation({ card, day, meal, will_come }) &&
+                this.mealReservationsRepository.addNewUnusualReservation({ user_id, day, meal, will_come }) &&
                 day === today && 
                 curr_meal === meal
                 ) {
 
                 if (will_come) {
                     this.mealReservationsRepository.countActiveVegs() != null && (() => {
-                        this.mealReservationsRepository.upateCounter({day, meal})
-                        socketIoService.broadcast("created");
+                        socketIoService.broadcast("increment");
                     })()
                 }
                 else {
                     this.mealReservationsRepository.countActiveVegs() != null && (() => {
-                        this.mealReservationsRepository.removeCardFromToday(card, {day, meal})
-                        socketIoService.broadcast("one passed")
+                        socketIoService.broadcast("decrement")
                     })()
                 }
             }

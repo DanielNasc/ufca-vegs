@@ -57,7 +57,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         reservation.is_fixed = true
     }
 
-    addNewUnusualReservation({ user_id, will_come, meal, day}: IAddNewUnusualReservation): void {
+    addNewUnusualReservation({ user_id, will_come, meal, day}: IAddNewUnusualReservation): boolean {
         // verifica se já existe uma reserva para o usuário no dia e na refeição
         const reservation = this.stupidDatabase.find(
             reservation => reservation.user_id === user_id && reservation.day === day && reservation.meal === meal
@@ -76,11 +76,13 @@ export class MealReservationsRepository implements IMealReservationsRepository {
                 this.stupidDatabase.push(newReservation)
             }
         } else {
-            if (will_come === reservation.will_come) return
+            if (will_come === reservation.will_come) return false
 
             reservation.will_come = will_come
             reservation.is_fixed = false
         }
+
+        return true
     }
 
     countActiveVegs(): number | null {

@@ -19,7 +19,7 @@ export interface IMealReservationsRepository {
     initializeDatabase(): void;
     initializeVegsCounter(props: IMealAndDay): void
     addNewReservation(props: IAddNewReservation): void;
-    addNewUnusualReservation(props: IAddNewUnusualReservation): void;
+    addNewUnusualReservation(props: IAddNewUnusualReservation): boolean;
     countActiveVegs(props: IMealAndDay): number | null; // conta quantos vegetarianos irão comer
     checkIfVegWillComeInMeal(props: IAddNewReservation): boolean | null; // verifica se o veg irá comer
 }
