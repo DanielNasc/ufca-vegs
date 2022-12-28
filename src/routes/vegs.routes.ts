@@ -9,14 +9,14 @@ import { listAllVegsController } from "../useCases/listAllVegs";
 
 const vegsRouter = Router();
 
-vegsRouter.get("/", (_, res) => listAllVegsController.handle(res));
-vegsRouter.post("/", (req, res) => createVegController.handle(req, res));
-vegsRouter.delete("/", (req, res) => deleteVegController.handle(req, res));
+vegsRouter.get("/", (_, res) => listAllVegsController.handle(res)); // [v]
+vegsRouter.post("/", (req, res) => createVegController.handle(req, res)); // [v]
+vegsRouter.delete("/", (req, res) => deleteVegController.handle(req, res)); // [v]
 
-vegsRouter.get("/count", (_, res) => countActiveVegsController.handle(res));
+vegsRouter.get("/count", (_, res) => countActiveVegsController.handle(res)); // [x]
 
-vegsRouter.post("/unusual", (req, res) => createUnusualReservationController.handle(req, res));
+vegsRouter.post("/unusual", (req, res) => createUnusualReservationController.handle(req, res)); // [x]
 
-vegsRouter.get("/scheduletable/:card", (req, res) => getScheduleTableController.handle(req, res))
+vegsRouter.get("/scheduletable/:card", (req, res) => getScheduleTableController.handle(req, res)) // [x]
 
 export { vegsRouter };

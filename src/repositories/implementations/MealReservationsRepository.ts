@@ -1,38 +1,16 @@
-import { VegsRepository } from "./VegsRepository";
 import { MealReservation } from "../../model/MealReservation";
-import { Veg } from "../../model/Veg";
-import { Days } from "../../utils/types";
+// import { Days } from "../../utils/types";
 import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
 
-type Reservation = {
-    [k in ("lunch" | "dinner")]:  MealReservation
-};
-
-type StupidDatabase = {
-    [key in Days]: Reservation
-}
-
-const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
-const MEALS: Array<"lunch" | "dinner"> = ["lunch", "dinner"];
+// const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
+// const MEALS: Array<"lunch" | "dinner"> = ["lunch", "dinner"];
 
 export class MealReservationsRepository implements IMealReservationsRepository {
     private static INSTANCE: MealReservationsRepository;
-    private stupidDatabase: StupidDatabase;
-    private vegsRepository: VegsRepository;
-    
-    protected remainingVegs: number | null;
+    private stupidDatabase: MealReservation[];
     
     constructor() {
-        this.vegsRepository = VegsRepository.getInstance()
-        this.stupidDatabase = {} as StupidDatabase;
-        this.remainingVegs = null;
-        
-        for (const day of DAYS) {
-            this.stupidDatabase[day] = {} as Reservation
-            for (const meal of MEALS) {
-                this.stupidDatabase[day][meal] = new MealReservation();
-            }
-        }
+        this.stupidDatabase = [];
     }
     
     public static getInstance() {
@@ -42,71 +20,68 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     }
 
     initializeDatabase(): void {
-        const allVegs = this.vegsRepository.listAllVegs()
-
-        for (const veg of allVegs) {
-            // podia ser só for ( const day of DAYS ) mas assim fica mo bonitão kkkkkk
-            // ( quando eu a versão final tiver pronta eu boto esse )
-            for (const day of Object.keys(veg.scheduleTable) as Array<keyof (typeof veg.scheduleTable)>) {
-                for (const meal of MEALS) {
-                    veg.scheduleTable[day][meal] && this.stupidDatabase[day][meal].addNewCard(veg.card)
-                }
-            }
-        }
     }
     
     initializeVegsCounter({ day, meal }: IMealAndDay): void {
-        if (this.remainingVegs) return
-
-        this.stupidDatabase[day][meal].initializeWillComeToday();
-        this.remainingVegs = this.stupidDatabase[day][meal].willComeToday.length;
 	}
 
     addNewReservation({ day, id, meal } : IAddNewReservation): void {
-        this.stupidDatabase[day][meal].addNewCard(id);
-    }
+        // verifica se já existe uma reserva para o usuário no dia e na refeição
+        const reservation = this.stupidDatabase.find(
+            reservation => reservation.user_id === id && reservation.day === day && reservation.meal === meal
+        )
 
-    addNewUnusualReservation({ card, will_come, meal, day}: IAddNewUnusualReservation): boolean {
-        return this.stupidDatabase[day][meal].addNewUnusualReservation({card, will_come})
-    }
+        if (!reservation) {
+            const newReservation = new MealReservation({
+                user_id: id,
+                meal,
+                day,
+                is_fixed: true,
+                will_come: true
+            })
+    
+            this.stupidDatabase.push(newReservation)
 
-	reset({day, meal}: IMealAndDay): void {
-		this.remainingVegs = null;
-        this.stupidDatabase[day][meal].reset()
-	}	
-
-	countActiveVegs(): number | null {
-		return this.remainingVegs;
-	}
-
-	increaseCounter(): void {
-		if (this.remainingVegs != null) {
-			this.remainingVegs++;
-        }
-	}
-
-    upateCounter({ day, meal }: IMealAndDay): void {
-        if (this.remainingVegs != null) {
-            this.remainingVegs = this.stupidDatabase[day][meal].countCards()
-        }
-    }
-
-    removeCardFromToday(card: number, { day, meal }: IMealAndDay): boolean {
-        if (!(this.remainingVegs && this.stupidDatabase[day][meal].removeOne(card))) {
-            this.upateCounter({meal, day})
-			return false
+            return
         }
 
-        return true
+        if (reservation.will_come && reservation.is_fixed) return
+
+        reservation.will_come = true
+        reservation.is_fixed = true
     }
 
-	decreaseCounter(card: number, { day, meal }: IMealAndDay): boolean {
-		if (!(this.remainingVegs && this.stupidDatabase[day][meal].removeOne(card))) {
-			return false
-        }
+    addNewUnusualReservation({ user_id, will_come, meal, day}: IAddNewUnusualReservation): void {
+        // verifica se já existe uma reserva para o usuário no dia e na refeição
+        const reservation = this.stupidDatabase.find(
+            reservation => reservation.user_id === user_id && reservation.day === day && reservation.meal === meal
+        )
 
-        this.remainingVegs--;
+        if (!reservation) {
+            if (will_come) {
+                const newReservation = new MealReservation({
+                    user_id,
+                    meal,
+                    day,
+                    is_fixed: false,
+                    will_come
+                })
         
-        return true
-	}
+                this.stupidDatabase.push(newReservation)
+            }
+        } else {
+            if (will_come === reservation.will_come) return
+
+            reservation.will_come = will_come
+            reservation.is_fixed = false
+        }
+    }
+
+    countActiveVegs({ day, meal }: IMealAndDay): number | null {
+        const reservations = this.stupidDatabase.filter(
+            reservation => reservation.day === day && reservation.meal === meal && reservation.will_come
+        )
+
+        return reservations.length
+    }
 }
