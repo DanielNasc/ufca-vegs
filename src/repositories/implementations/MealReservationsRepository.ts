@@ -1,6 +1,10 @@
 import { MealReservation } from "../../model/MealReservation";
+import { getDayAndHour } from "../../utils/getDayAndHour";
+import { getMeal } from "../../utils/getMeal";
+import { IMealHistoryRepository } from "../IMealHistoryRepository";
 // import { Days } from "../../utils/types";
 import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
+import { MealHistoryRepository } from "./MealHistoryRepository";
 
 // const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
 // const MEALS: Array<"lunch" | "dinner"> = ["lunch", "dinner"];
@@ -8,9 +12,11 @@ import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReserv
 export class MealReservationsRepository implements IMealReservationsRepository {
     private static INSTANCE: MealReservationsRepository;
     private stupidDatabase: MealReservation[];
+    private mealHistoryRepository: IMealHistoryRepository;
     
     constructor() {
         this.stupidDatabase = [];
+        this.mealHistoryRepository = MealHistoryRepository.getInstance();
     }
     
     public static getInstance() {
@@ -77,10 +83,35 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         }
     }
 
-    countActiveVegs({ day, meal }: IMealAndDay): number | null {
+    countActiveVegs(): number | null {
+        // a hora de almoço é de 11:00 às 14:00
+        // a hora do jantar é de 17:00 às 20:00
+        // se não estiver dentro desses horários, retorna null
+        const { day, hour } = getDayAndHour()
+        const meal = getMeal(hour)
+        // data que a refeição começou (11:00 de hoje ou 17:00 de hoje)
+        const meal_start_date = new Date()
+        meal_start_date.setHours(meal === "lunch" ? 11 : 17, 0, 0, 0)
+
+        if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
+
         const reservations = this.stupidDatabase.filter(
             reservation => reservation.day === day && reservation.meal === meal && reservation.will_come
         )
+
+        // historico a partir da data que a refeição começou
+        const meal_history = this.mealHistoryRepository.getHistoryAfterDateByDayAndMeal(
+            meal_start_date,
+            day,
+            meal
+        )
+
+        // se a refeição já começou, descartar as reservas que já foram atendidas
+        if (meal_history) {
+            const meal_history_ids = meal_history.map(reservation => reservation.user_id)
+
+            return reservations.filter(reservation => !meal_history_ids.includes(reservation.user_id)).length
+        }
 
         return reservations.length
     }
