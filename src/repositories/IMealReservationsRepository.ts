@@ -21,4 +21,5 @@ export interface IMealReservationsRepository {
     addNewReservation(props: IAddNewReservation): void;
     addNewUnusualReservation(props: IAddNewUnusualReservation): void;
     countActiveVegs(props: IMealAndDay): number | null; // conta quantos vegetarianos irão comer
+    checkIfVegWillComeInMeal(props: IAddNewReservation): boolean | null; // verifica se o veg irá comer
 }

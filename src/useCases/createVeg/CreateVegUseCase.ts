@@ -21,7 +21,7 @@ export class CreateVegUseCase {
 			private mealReservationsRepository: MealReservationsRepository
 			) {}
 
-	execute({card, name, schedule}: ICreateVegProps) {
+	execute({card, name, schedule}: ICreateVegProps): boolean {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 

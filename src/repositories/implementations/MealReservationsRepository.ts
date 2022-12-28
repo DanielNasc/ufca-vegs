@@ -84,4 +84,14 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 
         return reservations.length
     }
+
+    checkIfVegWillComeInMeal({ day, id, meal }: IAddNewReservation): boolean | null {
+        const reservation = this.stupidDatabase.find(
+            reservation => reservation.user_id === id && reservation.day === day && reservation.meal === meal
+        )
+
+        if (!reservation) return null
+
+        return reservation.will_come
+    }
 }

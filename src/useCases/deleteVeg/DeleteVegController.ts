@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { SocketIoService } from "../../services/SocketIo";
 import { DeleteVegUseCase } from "./DeleteVegUseCase";
 
 export class DeleteVegController {
@@ -7,7 +8,11 @@ export class DeleteVegController {
 	handle(req: Request, res: Response) {
 		const { card } = req.body;
 
-		this.deleteVegUseCase.execute(card);
+		const hasReservation = this.deleteVegUseCase.execute(card);
+
+		if (hasReservation) {
+			SocketIoService.getInstance().broadcast("decrement")
+		}
 
 		return res.status(204).send();
 	}
