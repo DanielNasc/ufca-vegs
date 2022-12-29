@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { MealReservationsRepository } from "../repositories/implementations/MealReservationsRepository";
 
 import { countActiveVegsController } from "../useCases/countActiveVegs";
 import { createUnusualReservationController } from "../useCases/createUnusualReservation";
@@ -18,5 +19,9 @@ vegsRouter.get("/count", (_, res) => countActiveVegsController.handle(res)); // 
 vegsRouter.post("/unusual", (req, res) => createUnusualReservationController.handle(req, res)); // [x]
 
 vegsRouter.get("/scheduletable/:card", (req, res) => getScheduleTableController.handle(req, res)) // [x]
+
+vegsRouter.get("/all", (_, res) => {
+    return res.json(MealReservationsRepository.getInstance().getAllReservations())
+}); // [x]
 
 export { vegsRouter };

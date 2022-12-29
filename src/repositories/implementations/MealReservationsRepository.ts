@@ -77,7 +77,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
                 this.stupidDatabase.push(newReservation)
             }
         } else {
-            if (will_come === reservation.will_come) return false
+            if ( will_come === reservation.will_come ) return false
 
             reservation.will_come = will_come
             reservation.is_fixed = false
@@ -94,9 +94,9 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         const meal = getMeal(hour)
         // data que a refeição começou (11:00 de hoje ou 17:00 de hoje)
         const meal_start_date = new Date()
-        meal_start_date.setHours(meal === "lunch" ? 11 : 17, 0, 0, 0)
+        meal_start_date.setHours(meal === "lunch" ? 1 : 17, 0, 0, 0)
 
-        if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
+        // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
 
         const reservations = this.stupidDatabase.filter(
             reservation => reservation.day === day && reservation.meal === meal && reservation.will_come
@@ -135,11 +135,47 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 
         for (const day of DAYS) {
             scheduleTable[day] = {
-                lunch: !!reservations.find(reservation => reservation.day === day && reservation.meal === "lunch"),
-                dinner: !!reservations.find(reservation => reservation.day === day && reservation.meal === "dinner")
+                lunch: !!reservations.find(reservation => reservation.day === day && reservation.meal === "lunch" && reservation.will_come),
+                dinner: !!reservations.find(reservation => reservation.day === day && reservation.meal === "dinner" && reservation.will_come)
             }
         }
 
         return scheduleTable
+    }
+
+    clearDatabase(): void {
+        const { day, hour } = getDayAndHour()
+        const meal = getMeal(hour)
+
+        this.stupidDatabase = this.stupidDatabase
+            // joga fora as reservas temporarias da refeição atual que o usuario não fixo disse que iria
+            .filter(
+                reservation => !(
+                    reservation.day === day &&
+                    reservation.meal === meal &&
+                    !reservation.is_fixed &&
+                    reservation.will_come
+                )
+            )
+            // voltar as reservas canceladas temporariamente para o estado normal (is_fixed = true, will_come = true)
+            this.stupidDatabase = this.stupidDatabase.map(
+                reservation => {
+                    if (
+                        reservation.day === day &&
+                        reservation.meal === meal &&
+                        !reservation.is_fixed &&
+                        !reservation.will_come
+                    ) {
+                        reservation.is_fixed = true
+                        reservation.will_come = true
+                    }
+
+                    return reservation
+                }
+            )
+    }
+
+    getAllReservations(): MealReservation[] {
+        return this.stupidDatabase
     }
 }

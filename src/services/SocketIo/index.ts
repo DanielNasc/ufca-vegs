@@ -4,9 +4,11 @@ import { getDayAndHour } from "../../utils/getDayAndHour";
 import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
 import { getMeal } from "../../utils/getMeal";
 import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { MealHistoryRepository } from "../../repositories/implementations/MealHistoryRepository";
 
 const mealReservationsRepository = MealReservationsRepository.getInstance();
 const vegsRepository = VegsRepository.getInstance()
+const mealHistoryRepository = MealHistoryRepository.getInstance()
 
 export class SocketIoService {
     private io: Server | undefined;
@@ -25,25 +27,16 @@ export class SocketIoService {
             console.log("user connected");
 
             socket.on("one passed", (card) => {
-                const {day, hour} = getDayAndHour()
+                const { day, hour } = getDayAndHour()
                 const meal = getMeal(hour)
-                mealReservationsRepository.removeCardFromToday(Number(card), {day, meal}) && this.broadcast("one passed")
+                const user_id = vegsRepository.getIdByCard(card)
+
+                this.broadcast("decrement")
             })
-            socket.on("initialize counter", () => {
-                const {day, hour} = getDayAndHour();
-                const meal = getMeal(hour);
 
-                mealReservationsRepository.initializeVegsCounter({meal, day});
-
-                this.broadcast("counter initialized");
-            })
-            socket.on("clear counter", () => {
-                const {day, hour} = getDayAndHour();
-                const meal = getMeal(hour);
-
-                mealReservationsRepository.reset({meal, day});
-                vegsRepository.resetScheduledMeal({day, meal})
-                this.broadcast("counter cleaned");
+            socket.on("clear", () => {
+                mealReservationsRepository.clearDatabase()
+                this.broadcast("cleaned")
             })
         })
     }

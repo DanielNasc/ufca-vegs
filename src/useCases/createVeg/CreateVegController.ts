@@ -11,7 +11,7 @@ export class CreateVegController {
 		if (
 			this.createVegUseCase.execute({card: parseInt(card), name, schedule}) // retorna true se o usuário vai comer no dia
 		)
-			SocketIoService.getInstance().broadcast("created"); // se ele for, anuncia p todo mundo aumentar um ao contador
+			SocketIoService.getInstance().broadcast("increment"); // se ele for, anuncia p todo mundo aumentar um ao contador
 		
 
 		return res.status(201).send("Created");
