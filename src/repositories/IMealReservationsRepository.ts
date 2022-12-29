@@ -30,4 +30,5 @@ export interface IMealReservationsRepository {
     countActiveVegs(props: IMealAndDay): number | null; // conta quantos vegetarianos irão comer
     checkIfVegWillComeInMeal(props: IAddNewReservation): boolean | null; // verifica se o veg irá comer
     sendScheduleTableOfVeg(id: string): ScheduleTable;
+    saveToHistory(id: string, meal: "lunch" | "dinner", day: Days,  did_come: boolean): void;
 }

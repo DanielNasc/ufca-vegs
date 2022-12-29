@@ -29,8 +29,11 @@ export class SocketIoService {
             socket.on("one passed", (card) => {
                 const { day, hour } = getDayAndHour()
                 const meal = getMeal(hour)
-                const user_id = vegsRepository.getIdByCard(card)
+                const user_id = vegsRepository.getIdByCard(parseInt(card))
 
+                if (!user_id) return
+
+                mealReservationsRepository.saveToHistory(user_id, meal, day, true)
                 this.broadcast("decrement")
             })
 

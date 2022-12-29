@@ -175,6 +175,23 @@ export class MealReservationsRepository implements IMealReservationsRepository {
             )
     }
 
+    saveToHistory(id: string, meal: "lunch" | "dinner", day: Days, did_come: boolean): void {
+        const reservation = this.stupidDatabase.find(
+            reservation => reservation.user_id === id && reservation.day === day && reservation.meal === meal
+        )
+
+        if (!reservation) return
+
+        this.mealHistoryRepository.addNewHistoryElement({
+            day,
+            meal,
+            user_id: id,
+            did_come: did_come,
+            is_fixed: reservation.is_fixed,
+            respected_the_reservation: reservation.will_come === did_come
+        })
+    }
+
     getAllReservations(): MealReservation[] {
         return this.stupidDatabase
     }
