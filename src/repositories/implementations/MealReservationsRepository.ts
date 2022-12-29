@@ -1,12 +1,13 @@
 import { MealReservation } from "../../model/MealReservation";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
+import { Days } from "../../utils/types";
 import { IMealHistoryRepository } from "../IMealHistoryRepository";
 // import { Days } from "../../utils/types";
-import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository } from "../IMealReservationsRepository";
+import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository, ScheduleTable } from "../IMealReservationsRepository";
 import { MealHistoryRepository } from "./MealHistoryRepository";
 
-// const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
+const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
 // const MEALS: Array<"lunch" | "dinner"> = ["lunch", "dinner"];
 
 export class MealReservationsRepository implements IMealReservationsRepository {
@@ -126,5 +127,19 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         if (!reservation) return null
 
         return reservation.will_come
+    }
+
+    sendScheduleTableOfVeg(id: string): ScheduleTable {
+        const scheduleTable = {} as ScheduleTable
+        const reservations = this.stupidDatabase.filter(reservation => reservation.user_id === id)
+
+        for (const day of DAYS) {
+            scheduleTable[day] = {
+                lunch: !!reservations.find(reservation => reservation.day === day && reservation.meal === "lunch"),
+                dinner: !!reservations.find(reservation => reservation.day === day && reservation.meal === "dinner")
+            }
+        }
+
+        return scheduleTable
     }
 }

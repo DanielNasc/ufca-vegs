@@ -6,6 +6,13 @@ export interface IMealAndDay {
     meal: "lunch" | "dinner"
 }
 
+export type ScheduleTable = {
+	[key in Days]: {
+		lunch: boolean;
+		dinner: boolean;
+	}
+}
+
 export type IAddNewReservation = { id: string } & IMealAndDay
 
 export interface IAddNewUnusualReservation { 
@@ -22,4 +29,5 @@ export interface IMealReservationsRepository {
     addNewUnusualReservation(props: IAddNewUnusualReservation): boolean;
     countActiveVegs(props: IMealAndDay): number | null; // conta quantos vegetarianos irão comer
     checkIfVegWillComeInMeal(props: IAddNewReservation): boolean | null; // verifica se o veg irá comer
+    sendScheduleTableOfVeg(id: string): ScheduleTable;
 }
