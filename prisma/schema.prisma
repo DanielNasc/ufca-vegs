@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Vegetarian {
+  id               String               @id @default(uuid())
+  name             String               @db.VarChar(255)
+  card             Int
+  created_at       DateTime             @default(now())
+  MealReservations MealReservation[]
+  MealHistory      MealHistoryElement[]
+}
+
+model MealReservation {
+  id         String     @id @default(uuid())
+  user_id    String     @db.VarChar(255)
+  meal       String     @db.VarChar(255)
+  day        String     @db.VarChar(255)
+  is_fixed   Boolean    @default(true)
+  will_come  Boolean    @default(true)
+  created_at DateTime   @default(now())
+  vegetarian Vegetarian @relation(fields: [user_id], references: [id])
+}
+
+model MealHistoryElement {
+  id                        String   @id @default(uuid())
+  user_id                   String   @db.VarChar()
+  day                       String   @db.VarChar(255)
+  meal                      String   @db.VarChar(255)
+  did_come                  Boolean
+  respected_the_reservation Boolean
+  is_fixed                  Boolean
+  date                      DateTime @default(now())
+
+  vegetarian Vegetarian @relation(fields: [user_id], references: [id])
+}

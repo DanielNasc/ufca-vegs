@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  database:
+    image: postgres
+    container_name: ufca_vegs_db_container
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=veg
+      - POSTGRES_PASSWORD=ufcavegtop
+      - POSTGRES_DB=ufcavegsdb
+
+volumes:
+  postgres:
+
+
