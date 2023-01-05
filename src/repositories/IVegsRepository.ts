@@ -2,8 +2,8 @@ import { Veg } from "../model/Veg";
 import { Days } from "../utils/types";
 
 export interface IReservation {
-	day: Days;
-	meal: "lunch" | "dinner";
+    day: Days;
+    meal: "lunch" | "dinner";
 }
 
 export interface ICreateVegDTO {
@@ -24,10 +24,10 @@ export interface IAddUnusualReservationProps {
 }
 
 export interface IVegsRepository {
-    listAllVegs(): Veg[]; // manda todos os vegs
-    createVeg(props: ICreateVegDTO): string; // cria novo obj p um vegetariano
-    getIdByCard(card: number): string | undefined; 
-    getById(id: string): Veg | undefined;
-    removeVeg(id: string): void; // remove o vegetariano do banco de dados
-    updateCard({ id, card }: IUpdateCardPropsDTO): void; // atualiza o numero do cartao de um veg
+    listAllVegs(): Promise<Veg[]>; // manda todos os vegs
+    createVeg(props: ICreateVegDTO): Promise<string>; // cria novo obj p um vegetariano
+    getIdByCard(card: number): Promise<string | undefined>;
+    getById(id: string): Promise<Veg | null>;
+    removeVeg(id: string): Promise<void>; // remove o vegetariano do banco de dados
+    updateCard({ id, card }: IUpdateCardPropsDTO): Promise<void>; // atualiza o numero do cartao de um veg
 }

@@ -1,7 +1,7 @@
-import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
 
 export class CountActiveVegsUseCase {
-	constructor(private mealReservationsRepository: MealReservationsRepository) {}
+	constructor(private mealReservationsRepository: MealReservationsRepository) { }
 
 	execute() {
 		// numero de vegs que vão comer hj ou null

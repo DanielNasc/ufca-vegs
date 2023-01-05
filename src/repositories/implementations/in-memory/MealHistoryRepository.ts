@@ -1,13 +1,13 @@
-import { MealHistoryElement } from "../../model/MealHistoryElement";
-import { Days } from "../../utils/types";
-import { IMealHistoryRepository } from "../IMealHistoryRepository";
+import { MealHistoryElement } from "../../../model/MealHistoryElement";
+import { Days } from "../../../utils/types";
+import { IMealHistoryRepository } from "../../IMealHistoryRepository";
 
 export class MealHistoryRepository implements IMealHistoryRepository {
     private history: MealHistoryElement[];
 
     private static INSTANCE: MealHistoryRepository;
 
-    private constructor() { 
+    private constructor() {
         this.history = [];
     }
 

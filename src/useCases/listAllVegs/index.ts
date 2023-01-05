@@ -1,4 +1,4 @@
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
 import { ListAllVegsController } from "./ListAllVegsController";
 import { ListAllVegsUseCase } from "./ListAllVegsUseCase";
 

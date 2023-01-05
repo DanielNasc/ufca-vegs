@@ -1,5 +1,5 @@
 import { IMealReservationsRepository } from "../../repositories/IMealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
 
@@ -7,7 +7,7 @@ export class DeleteVegUseCase {
 	constructor(
 		private vegsRepository: VegsRepository,
 		private mealReservationsRepository: IMealReservationsRepository
-	) {}
+	) { }
 
 	execute(card: number): boolean {
 		const { day, hour } = getDayAndHour()

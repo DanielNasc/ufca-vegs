@@ -1,4 +1,4 @@
-import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
 import { CountActiveVegsController } from "./CountActiveVegsController";
 import { CountActiveVegsUseCase } from "./CountActiveVegsUseCase";
 

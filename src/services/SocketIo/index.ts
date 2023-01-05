@@ -1,10 +1,10 @@
 import { Server } from "socket.io";
 import http from "http"
 import { getDayAndHour } from "../../utils/getDayAndHour";
-import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
 import { getMeal } from "../../utils/getMeal";
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
-import { MealHistoryRepository } from "../../repositories/implementations/MealHistoryRepository";
+import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
+import { MealHistoryRepository } from "../../repositories/implementations/in-memory/MealHistoryRepository";
 
 const mealReservationsRepository = MealReservationsRepository.getInstance();
 const vegsRepository = VegsRepository.getInstance()

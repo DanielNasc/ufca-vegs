@@ -1,5 +1,5 @@
-import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
 import { CreateVegController } from "./CreateVegController";
 import { CreateVegUseCase } from "./CreateVegUseCase";
 

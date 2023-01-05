@@ -1,10 +1,10 @@
-import { MealReservation } from "../../model/MealReservation";
-import { getDayAndHour } from "../../utils/getDayAndHour";
-import { getMeal } from "../../utils/getMeal";
-import { Days } from "../../utils/types";
-import { IMealHistoryRepository } from "../IMealHistoryRepository";
+import { MealReservation } from "../../../model/MealReservation";
+import { getDayAndHour } from "../../../utils/getDayAndHour";
+import { getMeal } from "../../../utils/getMeal";
+import { Days } from "../../../utils/types";
+import { IMealHistoryRepository } from "../../IMealHistoryRepository";
 // import { Days } from "../../utils/types";
-import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository, ScheduleTable } from "../IMealReservationsRepository";
+import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository, ScheduleTable } from "../../IMealReservationsRepository";
 import { MealHistoryRepository } from "./MealHistoryRepository";
 
 const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
@@ -14,12 +14,12 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     private static INSTANCE: MealReservationsRepository;
     private stupidDatabase: MealReservation[];
     private mealHistoryRepository: IMealHistoryRepository;
-    
+
     constructor() {
         this.stupidDatabase = [];
         this.mealHistoryRepository = MealHistoryRepository.getInstance();
     }
-    
+
     public static getInstance() {
         !this.INSTANCE && (() => this.INSTANCE = new MealReservationsRepository())()
 
@@ -28,11 +28,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 
     initializeDatabase(): void {
     }
-    
-    initializeVegsCounter({ day, meal }: IMealAndDay): void {
-	}
 
-    addNewReservation({ day, id, meal } : IAddNewReservation): void {
+    initializeVegsCounter({ day, meal }: IMealAndDay): void {
+    }
+
+    addNewReservation({ day, id, meal }: IAddNewReservation): void {
         // verifica se já existe uma reserva para o usuário no dia e na refeição
         const reservation = this.stupidDatabase.find(
             reservation => reservation.user_id === id && reservation.day === day && reservation.meal === meal
@@ -46,7 +46,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
                 is_fixed: true,
                 will_come: true
             })
-    
+
             this.stupidDatabase.push(newReservation)
 
             return
@@ -58,7 +58,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         reservation.is_fixed = true
     }
 
-    addNewUnusualReservation({ user_id, will_come, meal, day}: IAddNewUnusualReservation): boolean {
+    addNewUnusualReservation({ user_id, will_come, meal, day }: IAddNewUnusualReservation): boolean {
         // verifica se já existe uma reserva para o usuário no dia e na refeição
         const reservation = this.stupidDatabase.find(
             reservation => reservation.user_id === user_id && reservation.day === day && reservation.meal === meal
@@ -73,11 +73,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
                     is_fixed: false,
                     will_come
                 })
-        
+
                 this.stupidDatabase.push(newReservation)
             }
         } else {
-            if ( will_come === reservation.will_come ) return false
+            if (will_come === reservation.will_come) return false
 
             reservation.will_come = will_come
             reservation.is_fixed = false
@@ -157,22 +157,22 @@ export class MealReservationsRepository implements IMealReservationsRepository {
                     reservation.will_come
                 )
             )
-            // voltar as reservas canceladas temporariamente para o estado normal (is_fixed = true, will_come = true)
-            this.stupidDatabase = this.stupidDatabase.map(
-                reservation => {
-                    if (
-                        reservation.day === day &&
-                        reservation.meal === meal &&
-                        !reservation.is_fixed &&
-                        !reservation.will_come
-                    ) {
-                        reservation.is_fixed = true
-                        reservation.will_come = true
-                    }
-
-                    return reservation
+        // voltar as reservas canceladas temporariamente para o estado normal (is_fixed = true, will_come = true)
+        this.stupidDatabase = this.stupidDatabase.map(
+            reservation => {
+                if (
+                    reservation.day === day &&
+                    reservation.meal === meal &&
+                    !reservation.is_fixed &&
+                    !reservation.will_come
+                ) {
+                    reservation.is_fixed = true
+                    reservation.will_come = true
                 }
-            )
+
+                return reservation
+            }
+        )
     }
 
     saveToHistory(id: string, meal: "lunch" | "dinner", day: Days, did_come: boolean): void {

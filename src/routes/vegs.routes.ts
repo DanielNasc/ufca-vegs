@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { MealReservationsRepository } from "../repositories/implementations/MealReservationsRepository";
+import { MealReservationsRepository } from "../repositories/implementations/in-memory/MealReservationsRepository";
 
 import { countActiveVegsController } from "../useCases/countActiveVegs";
 import { createUnusualReservationController } from "../useCases/createUnusualReservation";

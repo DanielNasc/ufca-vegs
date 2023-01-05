@@ -1,5 +1,5 @@
-import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
 import { Days } from "../../utils/types";
@@ -17,16 +17,16 @@ interface ICreateVegProps {
 
 export class CreateVegUseCase {
 	constructor(
-			private vegsRepository: VegsRepository,
-			private mealReservationsRepository: MealReservationsRepository
-			) {}
+		private vegsRepository: VegsRepository,
+		private mealReservationsRepository: MealReservationsRepository
+	) { }
 
-	execute({card, name, schedule}: ICreateVegProps): boolean {
+	execute({ card, name, schedule }: ICreateVegProps): boolean {
 		if (this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		const newVegId = this.vegsRepository.createVeg({card, name}); // cria novo vegetariano
-		const {day, hour} = getDayAndHour();
+		const newVegId = this.vegsRepository.createVeg({ card, name }); // cria novo vegetariano
+		const { day, hour } = getDayAndHour();
 		const meal = getMeal(hour);
 
 		let willComeToday = false;
@@ -41,7 +41,7 @@ export class CreateVegUseCase {
 			if (reservation.day === day && reservation.meal === meal)
 				willComeToday = true;
 		}
-		
+
 		return willComeToday
 	}
 }

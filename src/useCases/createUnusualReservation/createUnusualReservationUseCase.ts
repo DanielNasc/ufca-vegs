@@ -1,5 +1,5 @@
-import { MealReservationsRepository } from "../../repositories/implementations/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
 import { SocketIoService } from "../../services/SocketIo";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
@@ -17,10 +17,10 @@ interface IRequestUnusualReservation {
 const socketIoService = SocketIoService.getInstance()
 
 export class CreateUnusualReservationUseCase {
-    constructor( private mealReservationsRepository: MealReservationsRepository,
-                private vegsRepository: VegsRepository ) {}
+    constructor(private mealReservationsRepository: MealReservationsRepository,
+        private vegsRepository: VegsRepository) { }
 
-    execute({card, unusualReservations}: IRequestUnusualReservation) {
+    execute({ card, unusualReservations }: IRequestUnusualReservation) {
         const { day: today, hour } = getDayAndHour()
         const curr_meal = getMeal(hour)
         const user_id = this.vegsRepository.getIdByCard(card)
@@ -29,12 +29,12 @@ export class CreateUnusualReservationUseCase {
 
         for (const unusualReservation of unusualReservations) {
             const { day, meal, will_come } = unusualReservation;
-            
+
             if (
                 this.mealReservationsRepository.addNewUnusualReservation({ user_id, day, meal, will_come }) &&
-                day === today && 
+                day === today &&
                 curr_meal === meal
-                ) {
+            ) {
 
                 if (will_come) {
                     this.mealReservationsRepository.countActiveVegs() != null && (() => {

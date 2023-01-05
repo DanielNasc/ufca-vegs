@@ -1,5 +1,5 @@
-import { Veg } from "../../model/Veg";
-import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../IVegsRepository";
+import { Veg } from "../../../model/Veg";
+import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../../IVegsRepository";
 
 export class VegsRepository implements IVegsRepository {
 	private stupidDatabase: Veg[];
@@ -8,7 +8,7 @@ export class VegsRepository implements IVegsRepository {
 	constructor() {
 		this.stupidDatabase = [];
 	}
-	
+
 	public static getInstance(): VegsRepository {
 		if (!VegsRepository.INSTANCE) {
 			VegsRepository.INSTANCE = new VegsRepository();
@@ -42,7 +42,7 @@ export class VegsRepository implements IVegsRepository {
 
 	removeVeg(id: string): void {
 		const index = this.stupidDatabase.findIndex(veg => veg.id === id);
-		
+
 		this.stupidDatabase.splice(index, 1);
 	}
 
