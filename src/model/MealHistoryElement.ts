@@ -1,14 +1,14 @@
 import { Days } from "../utils/types";
 
 export class MealHistoryElement {
-    meal: "lunch" | "dinner";
-    day: Days;
+    meal: string;
+    day: string;
     user_id: string;
     did_come: boolean;
     respected_the_reservation: boolean;
     is_fixed: boolean;
     date: Date;
-     
+
     constructor({ meal, day, user_id, did_come, respected_the_reservation, is_fixed }: Omit<MealHistoryElement, "date">) {
         this.meal = meal;
         this.day = day;
