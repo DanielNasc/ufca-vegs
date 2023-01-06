@@ -1,5 +1,5 @@
-import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
 import { Days } from "../../utils/types";
@@ -21,11 +21,11 @@ export class CreateVegUseCase {
 		private mealReservationsRepository: MealReservationsRepository
 	) { }
 
-	execute({ card, name, schedule }: ICreateVegProps): boolean {
-		if (this.vegsRepository.getIdByCard(card))
+	async execute({ card, name, schedule }: ICreateVegProps): Promise<boolean> {
+		if (await this.vegsRepository.getIdByCard(card))
 			throw new Error("This card is already in use");
 
-		const newVegId = this.vegsRepository.createVeg({ card, name }); // cria novo vegetariano
+		const user_id = await this.vegsRepository.createVeg({ card, name }); // cria novo vegetariano
 		const { day, hour } = getDayAndHour();
 		const meal = getMeal(hour);
 
@@ -33,7 +33,7 @@ export class CreateVegUseCase {
 
 		for (const reservation of schedule) {
 			this.mealReservationsRepository.addNewReservation({
-				id: newVegId,
+				user_id,
 				meal: reservation.meal,
 				day: reservation.day
 			})

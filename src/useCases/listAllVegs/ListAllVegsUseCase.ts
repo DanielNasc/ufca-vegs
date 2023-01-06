@@ -1,9 +1,9 @@
-import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
+import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 
 export class ListAllVegsUseCase {
 	constructor(private vegsRepository: VegsRepository) { }
 
-	execute() {
-		return this.vegsRepository.listAllVegs();
+	async execute() {
+		return await this.vegsRepository.listAllVegs();
 	}
 }

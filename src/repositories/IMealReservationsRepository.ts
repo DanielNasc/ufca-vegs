@@ -31,4 +31,5 @@ export interface IMealReservationsRepository {
     checkIfVegWillComeInMeal(props: IAddNewReservation): Promise<boolean | null>; // verifica se o veg irá comer
     sendScheduleTableOfVeg(id: string): Promise<ScheduleTable>;
     saveToHistory(id: string, meal: "lunch" | "dinner", day: Days, did_come: boolean): Promise<void>;
+    clearDatabase(): Promise<void>
 }

@@ -1,15 +1,15 @@
-import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 
 export class GetScheduleTableUseCase {
     constructor(private vegsRepository: VegsRepository,
         private mealReservationsRepository: MealReservationsRepository) { }
 
-    execute(card: number) {
-        const id = this.vegsRepository.getIdByCard(card)
+    async execute(card: number) {
+        const user_id = await this.vegsRepository.getIdByCard(card)
 
-        if (!id) return null
+        if (!user_id) return null
 
-        return this.mealReservationsRepository.sendScheduleTableOfVeg(id)
+        return await this.mealReservationsRepository.sendScheduleTableOfVeg(user_id)
     }
 }

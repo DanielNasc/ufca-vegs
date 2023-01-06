@@ -1,5 +1,5 @@
-import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 import { SocketIoService } from "../../services/SocketIo";
 import { getDayAndHour } from "../../utils/getDayAndHour";
 import { getMeal } from "../../utils/getMeal";
@@ -20,10 +20,10 @@ export class CreateUnusualReservationUseCase {
     constructor(private mealReservationsRepository: MealReservationsRepository,
         private vegsRepository: VegsRepository) { }
 
-    execute({ card, unusualReservations }: IRequestUnusualReservation) {
+    async execute({ card, unusualReservations }: IRequestUnusualReservation) {
         const { day: today, hour } = getDayAndHour()
         const curr_meal = getMeal(hour)
-        const user_id = this.vegsRepository.getIdByCard(card)
+        const user_id = await this.vegsRepository.getIdByCard(card)
 
         if (!user_id) return
 
@@ -31,18 +31,19 @@ export class CreateUnusualReservationUseCase {
             const { day, meal, will_come } = unusualReservation;
 
             if (
-                this.mealReservationsRepository.addNewUnusualReservation({ user_id, day, meal, will_come }) &&
+                (await this.mealReservationsRepository.addNewUnusualReservation({ user_id, day, meal, will_come })) &&
                 day === today &&
                 curr_meal === meal
             ) {
+                const counter = await this.mealReservationsRepository.countActiveVegs()
 
                 if (will_come) {
-                    this.mealReservationsRepository.countActiveVegs() != null && (() => {
+                    counter != null && (() => {
                         socketIoService.broadcast("increment");
                     })()
                 }
                 else {
-                    this.mealReservationsRepository.countActiveVegs() != null && (() => {
+                    counter != null && (() => {
                         socketIoService.broadcast("decrement")
                     })()
                 }

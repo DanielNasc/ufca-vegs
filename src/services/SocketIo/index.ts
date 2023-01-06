@@ -1,14 +1,14 @@
 import { Server } from "socket.io";
 import http from "http"
 import { getDayAndHour } from "../../utils/getDayAndHour";
-import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
 import { getMeal } from "../../utils/getMeal";
-import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
-import { MealHistoryRepository } from "../../repositories/implementations/in-memory/MealHistoryRepository";
+import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
+import { MealHistoryRepository } from "../../repositories/implementations/postgres/MealHistoryRepository";
 
-const mealReservationsRepository = MealReservationsRepository.getInstance();
-const vegsRepository = VegsRepository.getInstance()
-const mealHistoryRepository = MealHistoryRepository.getInstance()
+const mealReservationsRepository = new MealReservationsRepository();
+const vegsRepository = new VegsRepository()
+const mealHistoryRepository = new MealHistoryRepository()
 
 export class SocketIoService {
     private io: Server | undefined;
@@ -21,24 +21,22 @@ export class SocketIoService {
             }
         })
 
-        mealReservationsRepository.initializeDatabase()
-
         this.io.on("connect", (socket) => {
             console.log("user connected");
 
-            socket.on("one passed", (card) => {
+            socket.on("one passed", async (card) => {
                 const { day, hour } = getDayAndHour()
                 const meal = getMeal(hour)
-                const user_id = vegsRepository.getIdByCard(parseInt(card))
+                const user_id = await vegsRepository.getIdByCard(parseInt(card))
 
                 if (!user_id) return
 
-                mealReservationsRepository.saveToHistory(user_id, meal, day, true)
+                await mealReservationsRepository.saveToHistory(user_id, meal, day, true)
                 this.broadcast("decrement")
             })
 
-            socket.on("clear", () => {
-                mealReservationsRepository.clearDatabase()
+            socket.on("clear", async () => {
+                await mealReservationsRepository.clearDatabase()
                 this.broadcast("cleaned")
             })
         })

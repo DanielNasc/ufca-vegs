@@ -1,9 +1,9 @@
-import { MealReservationsRepository } from "../../repositories/implementations/in-memory/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/in-memory/VegsRepository";
+import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
+import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 import { CreateVegController } from "./CreateVegController";
 import { CreateVegUseCase } from "./CreateVegUseCase";
 
-const vegsRepository = VegsRepository.getInstance();
-const mealReservationsRepository = MealReservationsRepository.getInstance()
+const vegsRepository = new VegsRepository();
+const mealReservationsRepository = new MealReservationsRepository()
 const createVegUseCase = new CreateVegUseCase(vegsRepository, mealReservationsRepository);
 export const createVegController = new CreateVegController(createVegUseCase);

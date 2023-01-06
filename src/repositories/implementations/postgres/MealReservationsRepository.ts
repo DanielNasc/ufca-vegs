@@ -74,21 +74,41 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         } else {
             if (will_come === reservation.will_come) return false // se o usuário já tiver feito a reserva, retorna false
 
-            await prisma.mealReservation.update({
-                where: {
-                    id: reservation.id
-                },
-                data: {
-                    is_fixed: false,
-                    will_come
+            if (reservation.will_come) { // will_come = false e reservation.will_come = true
+                if (reservation.is_fixed) {
+                    await prisma.mealReservation.update({
+                        where: {
+                            id: reservation.id
+                        },
+                        data: {
+                            is_fixed: false,
+                            will_come: false
+                        }
+                    })
+                } else {
+                    await prisma.mealReservation.delete({
+                        where: {
+                            id: reservation.id
+                        }
+                    })
                 }
-            })
+            } else { // will_come = true e reservation.will_come = false
+                await prisma.mealReservation.update({
+                    where: {
+                        id: reservation.id
+                    },
+                    data: {
+                        is_fixed: true,
+                        will_come: true
+                    }
+                })
+            }
         }
 
         return true
     }
 
-    async countActiveVegs(props: IMealAndDay): Promise<number | null> // conta quantos vegetarianos irão comer
+    async countActiveVegs(): Promise<number | null> // conta quantos vegetarianos irão comer
     {
         // a hora de almoço é de 11:00 às 14:00
         // a hora do jantar é de 17:00 às 20:00
@@ -161,8 +181,8 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 
         for (const day of DAYS) {
             schedule_table[day] = {
-                lunch: !!user_reservations.find(reservation => reservation.day === day && reservation.meal === "lunch"),
-                dinner: !!user_reservations.find(reservation => reservation.day === day && reservation.meal === "dinner")
+                lunch: !!user_reservations.find(reservation => reservation.day === day && reservation.meal === "lunch" && reservation.will_come),
+                dinner: !!user_reservations.find(reservation => reservation.day === day && reservation.meal === "dinner" && reservation.will_come)
             }
         }
 
@@ -197,4 +217,34 @@ export class MealReservationsRepository implements IMealReservationsRepository {
             })
         }
     }
+
+    async clearDatabase(): Promise<void> {
+        const { day, hour } = getDayAndHour()
+        const meal = getMeal(hour)
+
+        // joga fora as reservas temporarias da refeição atual que o usuario não fixo disse que iria
+        await prisma.mealReservation.deleteMany({
+            where: {
+                day,
+                meal,
+                is_fixed: false,
+                will_come: true
+            }
+        })
+
+        // voltar as reservas canceladas temporariamente para o estado normal (is_fixed = true, will_come = true)
+        await prisma.mealReservation.updateMany({
+            where: {
+                day,
+                meal,
+                is_fixed: false,
+                will_come: false
+            },
+            data: {
+                is_fixed: true,
+                will_come: true
+            }
+        })
+    }
+
 }
