@@ -149,13 +149,20 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         //     }
         // })
 
-        return await prisma.$queryRaw`
-            SELECT COUNT(*) FROM "MealReservation"
-            WHERE "day" = ${day} AND "meal" = ${meal} AND "will_come" = true AND "user_id" NOT IN (
-                SELECT "user_id" FROM "MealHistoryElement"
-                WHERE "day" = ${day} AND "meal" = ${meal} AND "did_come" = true AND "date" >= ${meal_start_date}
+        const count = await prisma.$queryRaw`
+        SELECT COUNT(*) FROM "MealReservation"
+            WHERE day = ${day} AND meal = ${meal} AND will_come = true  AND user_id NOT IN (
+                SELECT user_id FROM "MealHistoryElement"
+                WHERE day = ${day}  AND meal = ${meal} AND did_come = true AND created_at >= ${meal_start_date}
             )
-        `
+    `  as any
+
+        console.log(count);
+
+        console.log(count[0].count)
+
+
+        return parseInt(count[0].count)
     }
 
     async checkIfVegWillComeInMeal({ day, meal, user_id }: IAddNewReservation): Promise<boolean | null> // verifica se o veg irá comer

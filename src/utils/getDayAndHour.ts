@@ -6,5 +6,5 @@ export function getDayAndHour() {
     const day = newDate.toLocaleDateString("en", {weekday: "short"}).toLocaleLowerCase() as Days;
 
     // const pei: Days = "mon"
-    return {day, hour};
+    return {day: "mon", hour};
 }
