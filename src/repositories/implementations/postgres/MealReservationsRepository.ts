@@ -117,9 +117,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         const meal = getMeal(hour)
         // data que a refeição começou (11:00 de hoje ou 17:00 de hoje)
         const meal_start_date = new Date()
-        meal_start_date.setHours(meal === "lunch" ? 1 : 17, 0, 0, 0)
+        meal_start_date.setHours(meal === "lunch" ? 1 : 14, 0, 0, 0)
 
         // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
+
+        const meal_start_date_sql_string = `${meal_start_date.getFullYear()}-${meal_start_date.getMonth() + 1}-${meal_start_date.getDate()} ${meal_start_date.getHours()}:${meal_start_date.getMinutes()}:${meal_start_date.getSeconds()}`
 
         // se estiver dentro do horário, conta quantos vegetarianos irão comer
         // não conta os vegetarianos que já comeram (histórico)
@@ -153,14 +155,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         SELECT COUNT(*) FROM "MealReservation"
             WHERE day = ${day} AND meal = ${meal} AND will_come = true  AND user_id NOT IN (
                 SELECT user_id FROM "MealHistoryElement"
-                WHERE day = ${day}  AND meal = ${meal} AND did_come = true AND created_at >= ${meal_start_date}
-            )
+                WHERE day = ${day}  AND meal = ${meal} AND did_come = true AND "date" >= ${meal_start_date_sql_string}::date
+            )   
     `  as any
 
-        console.log(count);
-
-        console.log(count[0].count)
-
+        
 
         return parseInt(count[0].count)
     }
