@@ -172,18 +172,34 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     //         }
     //     }
     // })
+    //
 
-    const count = await prisma.$queryRaw`
-        SELECT COUNT(*) FROM "MealReservation"
-            WHERE day = ${day} AND meal = ${meal} AND will_come = true  AND user_id NOT IN (
-                SELECT user_id FROM "MealHistoryElement"
-                WHERE day = ${day}  AND meal = ${meal} AND did_come = true AND "date" >= ${meal_start_date_sql_string}::date
-            )   
-    `  as any
+    return await prisma.vegetarian.count({
+      where: {
+        MealHistory: {
+          every: {
+
+            day, meal,
+            did_come: true,
+            date: {
+              gt: meal_start_date
+            }
+          }
+        }
+      },
+    })
+
+    // const count = await prisma.$queryRaw`
+    //     SELECT COUNT(*) FROM "MealReservation"
+    //         WHERE day = ${day} AND meal = ${meal} AND will_come = true  AND user_id NOT IN (
+    //             SELECT user_id FROM "MealHistoryElement"
+    //             WHERE day = ${day}  AND meal = ${meal} AND did_come = true AND "date" >= ${meal_start_date_sql_string}::date
+    //         )   
+    // `  as any
 
 
 
-    return parseInt(count[0].count)
+    // return parseInt(count[0].count)
   }
 
   async checkIfVegWillComeInMeal({ day, meal, user_id }: IAddNewReservation): Promise<boolean | null> // verifica se o veg irá comer
@@ -244,6 +260,32 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         }
       })
     }
+  }
+
+  async addAbsences(): Promise<void> {
+    const { day, hour } = getDayAndHour()
+
+    const meal = getMeal(hour)
+
+    const meal_start_date = new Date()
+    meal_start_date.setHours(meal === "lunch" ? 1 : 14, 0, 0, 0)
+
+    // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
+
+    const meal_start_date_sql_string = `${meal_start_date.getFullYear()}-${meal_start_date.getMonth() + 1}-${meal_start_date.getDate()} ${meal_start_date.getHours()}:${meal_start_date.getMinutes()}:${meal_start_date.getSeconds()}`
+
+    await prisma.vegetarian.updateMany({
+      data: {
+        absences: {
+          increment: 1
+        }
+      },
+      where: {
+        MealReservations: {
+
+        }
+      }
+    })
   }
 
   async clearDatabase(): Promise<void> {
