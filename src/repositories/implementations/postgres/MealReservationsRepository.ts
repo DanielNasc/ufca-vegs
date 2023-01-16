@@ -174,11 +174,16 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     // })
     //
 
+
     return await prisma.vegetarian.count({
       where: {
+        MealReservations: {
+          some: {
+            day, meal, will_come: true
+          }
+        },
         MealHistory: {
-          every: {
-
+          none: {
             day, meal,
             did_come: true,
             date: {
@@ -282,8 +287,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
       },
       where: {
         MealReservations: {
-
-        }
+          every: {
+            day, meal,
+            will_come: true,
+          }
+        },
       }
     })
   }
