@@ -267,7 +267,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     }
   }
 
-  async addAbsences(): Promise<void> {
+  async incrementAbsences(): Promise<void> {
     const { day, hour } = getDayAndHour()
 
     const meal = getMeal(hour)
@@ -275,9 +275,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     const meal_start_date = new Date()
     meal_start_date.setHours(meal === "lunch" ? 1 : 14, 0, 0, 0)
 
-    // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
-
-    const meal_start_date_sql_string = `${meal_start_date.getFullYear()}-${meal_start_date.getMonth() + 1}-${meal_start_date.getDate()} ${meal_start_date.getHours()}:${meal_start_date.getMinutes()}:${meal_start_date.getSeconds()}`
+    // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3)
 
     await prisma.vegetarian.updateMany({
       data: {
@@ -287,11 +285,19 @@ export class MealReservationsRepository implements IMealReservationsRepository {
       },
       where: {
         MealReservations: {
-          every: {
+          some: {
             day, meal,
             will_come: true,
           }
         },
+        MealHistory: {
+          none: {
+            day, meal, did_come: true,
+            date: {
+              gt: meal_start_date
+            }
+          }
+        }
       }
     })
   }
@@ -299,6 +305,8 @@ export class MealReservationsRepository implements IMealReservationsRepository {
   async clearDatabase(): Promise<void> {
     const { day, hour } = getDayAndHour()
     const meal = getMeal(hour)
+
+    await this.incrementAbsences()
 
     // joga fora as reservas temporarias da refeição atual que o usuario não fixo disse que iria
     await prisma.mealReservation.deleteMany({
