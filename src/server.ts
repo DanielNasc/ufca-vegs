@@ -7,7 +7,7 @@ import 'express-async-errors'
 import { router } from "./routes";
 import { SocketIoService } from "./services/SocketIo";
 
-import { AppError } from "./AppError";
+import { AppError } from "./errors/AppError";
 
 const PORT = process.env.PORT || 3000;
 

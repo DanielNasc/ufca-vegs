@@ -1,4 +1,4 @@
-import { AppError } from "../../AppError";
+import { AppError } from "../../errors/AppError";
 import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
 import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 import { getDayAndHour } from "../../utils/getDayAndHour";
