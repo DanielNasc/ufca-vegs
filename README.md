@@ -50,7 +50,6 @@ querer.
 
 ## Como executar
 
-- deixe a aplicação do backend rodando: [link](https://github.com/DanielNasc/ufca-vegs-frontend)
 - clone o repositório;
 - entre no diretório do clone e instale as dependências com `npm i`
 - mude as variaveis do arquivo docker-compose de acordo com sua vontade e necessidade
@@ -59,3 +58,4 @@ querer.
     Por exemplo: `DATABASE_URL="postgres://veg:ufcavegtop@localhost:5432/ufcavegsdb?schema=public"`
 - suba o container do postgres
 - execute o servidor `npm run dev`
+- execute a aplicação do frontend e abra o site: [link](https://github.com/DanielNasc/ufca-vegs-frontend)
