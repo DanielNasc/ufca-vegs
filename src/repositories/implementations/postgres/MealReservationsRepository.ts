@@ -3,18 +3,13 @@ import { getDayAndHour } from "../../../utils/getDayAndHour";
 import { getMeal } from "../../../utils/getMeal";
 import { Days } from "../../../utils/types";
 
-import { IAddNewReservation, IAddNewUnusualReservation, IMealAndDay, IMealReservationsRepository, ScheduleTable } from "../../IMealReservationsRepository";
+import { IAddNewReservation, IAddNewUnusualReservation, IMealReservationsRepository, ScheduleTable } from "../../IMealReservationsRepository";
 
 const prisma = new PrismaClient();
 
 const DAYS: Days[] = ["mon", "tue", "wed", "thu", "fri"];
 
 export class MealReservationsRepository implements IMealReservationsRepository {
-  // useless code
-  async initializeDatabase(): Promise<void> { }
-  async initializeVegsCounter(props: IMealAndDay): Promise<void> { }
-
-
   async addNewReservation({ day, meal, user_id }: IAddNewReservation): Promise<void> {
     // verifica se já existe uma reserva para o usuário no dia e na refeição
     const reservation = await prisma.mealReservation.findFirst({

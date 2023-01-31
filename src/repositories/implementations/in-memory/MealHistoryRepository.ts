@@ -3,41 +3,41 @@ import { Days } from "../../../utils/types";
 import { IMealHistoryRepository } from "../../IMealHistoryRepository";
 
 export class MealHistoryRepository implements IMealHistoryRepository {
-    private history: MealHistoryElement[];
+  private history: MealHistoryElement[];
 
-    private static INSTANCE: MealHistoryRepository;
+  private static INSTANCE: MealHistoryRepository;
 
-    private constructor() {
-        this.history = [];
+  private constructor() {
+    this.history = [];
+  }
+
+  public static getInstance(): MealHistoryRepository {
+    if (!MealHistoryRepository.INSTANCE) {
+      MealHistoryRepository.INSTANCE = new MealHistoryRepository();
     }
 
-    public static getInstance(): MealHistoryRepository {
-        if (!MealHistoryRepository.INSTANCE) {
-            MealHistoryRepository.INSTANCE = new MealHistoryRepository();
-        }
+    return MealHistoryRepository.INSTANCE;
+  }
 
-        return MealHistoryRepository.INSTANCE;
-    }
+  async addNewHistoryElement(props: Omit<MealHistoryElement, "date">): Promise<void> {
+    const newHistoryElement = new MealHistoryElement(props);
 
-    addNewHistoryElement(props: Omit<MealHistoryElement, "date">): void {
-        const newHistoryElement = new MealHistoryElement(props);
+    this.history.push(newHistoryElement);
+  }
 
-        this.history.push(newHistoryElement);
-    }
+  async getHistoryByUserId(user_id: string): Promise<MealHistoryElement[]> {
+    return this.history.filter(historyElement => historyElement.user_id === user_id);
+  }
 
-    getHistoryByUserId(user_id: string): MealHistoryElement[] {
-        return this.history.filter(historyElement => historyElement.user_id === user_id);
-    }
+  async getHistoryAfterDate(date: Date): Promise<MealHistoryElement[]> {
+    return this.history.filter(historyElement => historyElement.date >= date);
+  }
 
-    getHistoryAfterDate(date: Date): MealHistoryElement[] {
-        return this.history.filter(historyElement => historyElement.date >= date);
-    }
+  async getHistoryAfterDateByDayAndMeal(date: Date, day: Days, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
+    return this.history.filter(historyElement => historyElement.date >= date && historyElement.day === day && historyElement.meal === meal);
+  }
 
-    getHistoryAfterDateByDayAndMeal(date: Date, day: Days, meal: "lunch" | "dinner"): MealHistoryElement[] {
-        return this.history.filter(historyElement => historyElement.date >= date && historyElement.day === day && historyElement.meal === meal);
-    }
-
-    getHistoryByDayAndMeal(day: Days, meal: "lunch" | "dinner"): MealHistoryElement[] {
-        return this.history.filter(historyElement => historyElement.day === day && historyElement.meal === meal);
-    }
+  async getHistoryByDayAndMeal(day: Days, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
+    return this.history.filter(historyElement => historyElement.day === day && historyElement.meal === meal);
+  }
 }

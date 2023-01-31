@@ -1,57 +1,58 @@
 import { Veg } from "../../../model/Veg";
-import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../../IVegsRepository";
+import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../../IVegsRepository"
 
 export class VegsRepository implements IVegsRepository {
-	private stupidDatabase: Veg[];
-	private static INSTANCE: VegsRepository;
+  private stupidDatabase: Veg[];
+  private static INSTANCE: VegsRepository;
 
-	constructor() {
-		this.stupidDatabase = [];
-	}
+  constructor() {
+    this.stupidDatabase = [];
+  }
 
-	public static getInstance(): VegsRepository {
-		if (!VegsRepository.INSTANCE) {
-			VegsRepository.INSTANCE = new VegsRepository();
-		}
+  public static getInstance(): VegsRepository {
+    if (!VegsRepository.INSTANCE) {
+      VegsRepository.INSTANCE = new VegsRepository();
+    }
 
-		return VegsRepository.INSTANCE;
-	}
+    return VegsRepository.INSTANCE;
+  }
 
-	listAllVegs(): Veg[] {
-		return [...this.stupidDatabase];
-	}
+  async listAllVegs(): Promise<Veg[]> {
+    return [...this.stupidDatabase];
+  }
 
-	createVeg(props: ICreateVegDTO): string {
-		const newVeg = new Veg(props);
+  async createVeg(props: ICreateVegDTO): Promise<string> {
+    const newVeg = new Veg(props);
 
-		this.stupidDatabase.push(newVeg);
+    this.stupidDatabase.push(newVeg);
 
-		return newVeg.id;
-	}
+    return newVeg.id;
+  }
 
-	getIdByCard(card: number): string | undefined {
-		const i = this.stupidDatabase.findIndex(veg => veg.card === card);
+  async getIdByCard(card: number): Promise<string | undefined> {
+    const i = this.stupidDatabase.findIndex(veg => veg.card === card);
 
-		return i > -1 ? this.stupidDatabase[i].id : undefined;
-	}
+    return i > -1 ? this.stupidDatabase[i].id : undefined;
+  }
 
-	getById(id: string | undefined): Veg | undefined {
-		if (!id) return undefined
-		return this.stupidDatabase.find(veg => veg.id === id);
-	}
+  async getById(id: string): Promise<Veg | null> {
+    if (!id) return null
 
-	removeVeg(id: string): void {
-		const index = this.stupidDatabase.findIndex(veg => veg.id === id);
+    return this.stupidDatabase.find(veg => veg.id === id) ?? null;
+  }
 
-		this.stupidDatabase.splice(index, 1);
-	}
+  async removeVeg(id: string): Promise<void> {
+    const index = this.stupidDatabase.findIndex(veg => veg.id === id);
 
-	updateCard({ id, card }: IUpdateCardPropsDTO): void {
-		const veg = this.getById(id);
+    this.stupidDatabase.splice(index, 1);
+  }
 
-		if (!veg)
-			return;
+  async updateCard({ id, card }: IUpdateCardPropsDTO): Promise<void> {
+    const veg = await this.getById(id);
 
-		veg.card = card;
-	}
+    if (!veg)
+      return;
+
+    veg.card = card;
+  }
 }

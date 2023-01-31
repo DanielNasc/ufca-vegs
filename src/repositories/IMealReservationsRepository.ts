@@ -1,4 +1,3 @@
-import { Veg } from "../model/Veg";
 import { Days } from "../utils/types";
 
 export interface IMealAndDay {
@@ -24,8 +23,6 @@ export interface IAddNewUnusualReservation {
 }
 
 export interface IMealReservationsRepository {
-  initializeDatabase(): Promise<void>;
-  initializeVegsCounter(props: IMealAndDay): Promise<void>
   addNewReservation(props: IAddNewReservation): Promise<void>;
   addNewUnusualReservation(props: IAddNewUnusualReservation): Promise<boolean>;
   countActiveVegs(props: IMealAndDay): Promise<number | null>; // conta quantos vegetarianos irão comer
