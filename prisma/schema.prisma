@@ -43,3 +43,9 @@ model MealHistoryElement {
 
   vegetarian Vegetarian @relation(fields: [user_id], references: [id])
 }
+
+model Admins {
+  id            String @id @default(uuid())
+  name          String @db.VarChar(255)
+  password_hash String @db.VarChar()
+}
