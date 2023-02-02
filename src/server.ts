@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv"
+dotenv.config()
+
 import express, { NextFunction, Request, Response } from "express";
 import http from "http";
 import cors from "cors";
