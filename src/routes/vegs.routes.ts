@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 
 import { countActiveVegsController } from "../useCases/countActiveVegs";
 import { createUnusualReservationController } from "../useCases/createUnusualReservation";
@@ -9,18 +10,13 @@ import { listAllVegsController } from "../useCases/listAllVegs";
 
 const vegsRouter = Router();
 
-vegsRouter.get("/", (_, res) => listAllVegsController.handle(res)); // [v]
-vegsRouter.get("/count", (_, res) => countActiveVegsController.handle(res)); // [x]
-vegsRouter.get("/scheduletable/:card", (req, res) => getScheduleTableController.handle(req, res)) // [x]
+vegsRouter.get("/", (_, res) => listAllVegsController.handle(res));
+vegsRouter.get("/count", (_, res) => countActiveVegsController.handle(res));
+vegsRouter.get("/scheduletable/:card", (req, res) => getScheduleTableController.handle(req, res));
 
-vegsRouter.post("/", (req, res) => createVegController.handle(req, res)); // [v]
-vegsRouter.post("/unusual", (req, res) => createUnusualReservationController.handle(req, res)); // [x]
+vegsRouter.post("/", ensureAuthenticated, (req, res) => createVegController.handle(req, res));
+vegsRouter.post("/unusual", ensureAuthenticated, (req, res) => createUnusualReservationController.handle(req, res));
 
-vegsRouter.delete("/", (req, res) => deleteVegController.handle(req, res)); // [v]
-
-
-// vegsRouter.get("/all", (_, res) => {
-//     return res.json(MealReservationsRepository.getInstance().getAllReservations())
-// }); // [x]
+vegsRouter.delete("/", ensureAuthenticated, (req, res) => deleteVegController.handle(req, res));
 
 export { vegsRouter };

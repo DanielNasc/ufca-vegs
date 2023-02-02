@@ -15,7 +15,7 @@ export class AuthenticateAdminUseCase {
   ) { }
 
   async execute({ email, password }: IRequest) {
-    const admin = await this.adminsRepository.getAdminByEmail(email)
+    const admin = await this.adminsRepository.getByEmail(email)
 
     if (!admin) throw new AppError("Invalid email or password", 400)
 
@@ -24,6 +24,7 @@ export class AuthenticateAdminUseCase {
     if (!match) throw new AppError("Invalid email or password", 400)
 
     const token = jwt.sign({
+      id: admin.id,
       email: admin.email,
       name: admin.name
     }, process.env.JWT_SECRET as string, {

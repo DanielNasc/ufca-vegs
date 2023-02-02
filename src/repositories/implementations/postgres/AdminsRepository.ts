@@ -4,7 +4,7 @@ import { IAdminsRepository } from "../../IAdminsRepository"
 const prismaClient = new PrismaClient()
 
 export class AdminsRepository implements IAdminsRepository {
-  async getAdminByEmail(email: string): Promise<Admins | null> {
+  async getByEmail(email: string): Promise<Admins | null> {
     const result = await prismaClient.admins.findUnique({
       where: {
         email
@@ -12,5 +12,13 @@ export class AdminsRepository implements IAdminsRepository {
     })
 
     return result;
+  }
+
+  async getById(id: string): Promise<Admins | null> {
+    return await prismaClient.admins.findUnique({
+      where: {
+        id
+      }
+    })
   }
 }

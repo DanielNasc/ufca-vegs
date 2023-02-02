@@ -1,5 +1,6 @@
 import { Admins } from "@prisma/client";
 
 export interface IAdminsRepository {
-  getAdminByEmail(email: string): Promise<Admins | null>;
+  getByEmail(email: string): Promise<Admins | null>;
+  getById(id: string): Promise<Admins | null>;
 }
