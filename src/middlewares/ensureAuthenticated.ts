@@ -8,21 +8,19 @@ interface IPayload {
 }
 
 export async function ensureAuthenticated(req: Request, _: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
+  const { token } = req.cookies;
 
-  if (!authHeader) throw new AppError("missing authorization header", 400)
-
-  const [, token] = authHeader.split(" ");
+  if (!token) throw new AppError("Missing authorization token", 401)
 
   try {
     const { id } = verify(token, process.env.JWT_SECRET as string) as IPayload;
 
-    const adminsRepository = new AdminsRepository
+    const adminsRepository = new AdminsRepository()
 
-    if (!(await adminsRepository.getById(id))) throw new AppError("Invalid token");
+    if (!(await adminsRepository.getById(id))) throw new AppError("Invalid token", 401);
 
     return next()
   } catch {
-    throw new AppError("Invalid token")
+    throw new AppError("Invalid token", 401)
   }
 }

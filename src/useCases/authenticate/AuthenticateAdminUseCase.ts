@@ -31,6 +31,6 @@ export class AuthenticateAdminUseCase {
       expiresIn: "7 days"
     })
 
-    return token
+    return { token, name: admin.name }
   }
 }

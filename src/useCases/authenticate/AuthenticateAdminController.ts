@@ -7,10 +7,15 @@ export class AuthenticateAdminController {
   async handle(req: Request, res: Response) {
     const { email, password } = req.body
 
-    const token = await this.authenticateAdminUseCase.execute({ email, password });
+    const { token, name } = await this.authenticateAdminUseCase.execute({ email, password });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7
+    })
 
     return res.json({
-      token
+      name
     })
   }
 }
