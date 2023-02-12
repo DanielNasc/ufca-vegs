@@ -1,12 +1,12 @@
-import * as dotenv from "dotenv"
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 
 import express, { NextFunction, Request, Response } from "express";
 import http from "http";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-import 'express-async-errors'
+import "express-async-errors";
 
 import { router } from "./routes";
 import { SocketIoService } from "./services/SocketIo";
@@ -17,28 +17,32 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 const server = http.createServer(app);
-const socketIO = SocketIoService.getInstance()
+const socketIO = SocketIoService.getInstance();
 
-socketIO.setUpSocket(server)
+socketIO.setUpSocket(server);
 
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN?.split(" ") || "*",
+    credentials: true,
+  })
+);
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(router);
 
-app.use((err: Error | AppError, _: Request, res: Response, __: NextFunction) => {
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
-      message: err.message
-    })
-  }
+app.use(
+  (err: Error | AppError, _: Request, res: Response, __: NextFunction) => {
+    if (err instanceof AppError) {
+      return res.status(err.statusCode).json({
+        message: err.message,
+      });
+    }
 
-  return res.status(500).json({
-    message: "Internal server error"
-  })
-})
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+);
 
 server.listen(PORT, () => console.log(`server running at port ${PORT}`));

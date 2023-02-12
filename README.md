@@ -53,9 +53,13 @@ querer.
 - clone o repositório;
 - entre no diretório do clone e instale as dependências com `npm i`
 - mude as variaveis do arquivo docker-compose de acordo com sua vontade e necessidade
-- crie um .env com a variavel DATABASE_URL e atribuindo a ela um valor no seguinte formato:
+- suba o container do postgres
+- crie um .env com as seguintes variáveis:
+  - `DATABASE_URL`: atribuindo a ela um valor no seguinte formato:
     `postgres://[POSTGRES_USER]:[POSTGRES_PASSWORD]@[HOST]/[POSTGRES_DB]?schema=public` substituindo os valores pelos que estão no arquivo docker-compose
     Por exemplo: `DATABASE_URL="postgres://veg:ufcavegtop@localhost:5432/ufcavegsdb?schema=public"`
-- suba o container do postgres
+  - `JWT_SECRET`: atribuindo a ela o valor que desejar, esse valor será usado para gerar os tokens de autenticação;
+  - `CORS_ORIGIN`: atribuindo a ela o valor que desejar, esse valor será usado para definir o endereço de origem que pode acessar a API. Pode ser mais de um, separando-os por espaço;
+    Por exemplo: `http://localhost:5173 http://localhost:5500 chrome-extension://[id]`
 - execute o servidor `npm run dev`
 - execute a aplicação do frontend e abra o site: [link](https://github.com/DanielNasc/ufca-vegs-frontend)
