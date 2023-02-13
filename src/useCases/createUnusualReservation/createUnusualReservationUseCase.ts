@@ -9,7 +9,7 @@ interface IRequestUnusualReservation {
   card: number;
   is_permanent: boolean
   unusualReservations: {
-    day: Days;
+    day: string;
     meal: "lunch" | "dinner";
     will_come: boolean;
   }[]

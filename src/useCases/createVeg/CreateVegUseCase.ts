@@ -6,7 +6,7 @@ import { getMeal } from "../../utils/getMeal";
 import { Days } from "../../utils/types";
 
 interface IRequestReservation {
-  day: Days;
+  day: string;
   meal: "lunch" | "dinner";
 }
 

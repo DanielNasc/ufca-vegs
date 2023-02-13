@@ -4,7 +4,7 @@ import { Days } from "../utils/types";
 interface IMealReservationProps {
     user_id: string;
     meal: string;
-    day: Days;
+    day: string;
     is_fixed: boolean;
     will_come: boolean;
 }
@@ -26,7 +26,7 @@ export class MealReservation {
     readonly id: string;
     public user_id: string;
     public meal: string;
-    public day: Days;
+    public day: string;
     public is_fixed: boolean;
     public will_come: boolean;
 

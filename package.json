@@ -1,7 +1,8 @@
 {
   "main": "./src/server.ts",
   "scripts": {
-    "dev": "tsx watch . --ignore node_modules/"
+    "dev": "tsx watch . --ignore node_modules/",
+    "build": "tsc --build"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

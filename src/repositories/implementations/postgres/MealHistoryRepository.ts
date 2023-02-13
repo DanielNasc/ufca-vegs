@@ -41,7 +41,7 @@ export class MealHistoryRepository implements IMealHistoryRepository {
 
         return history;
     }
-    async getHistoryAfterDateByDayAndMeal(date: Date, day: Days, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
+    async getHistoryAfterDateByDayAndMeal(date: Date, day: string, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
         const history = await prismaClient.mealHistoryElement.findMany({
             where: {
                 day,
@@ -55,7 +55,7 @@ export class MealHistoryRepository implements IMealHistoryRepository {
         return history;
     }
 
-    async getHistoryByDayAndMeal(day: Days, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
+    async getHistoryByDayAndMeal(day: string, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
         const history = await prismaClient.mealHistoryElement.findMany({
             where: {
                 day,

@@ -33,11 +33,11 @@ export class MealHistoryRepository implements IMealHistoryRepository {
     return this.history.filter(historyElement => historyElement.date >= date);
   }
 
-  async getHistoryAfterDateByDayAndMeal(date: Date, day: Days, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
+  async getHistoryAfterDateByDayAndMeal(date: Date, day: string, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
     return this.history.filter(historyElement => historyElement.date >= date && historyElement.day === day && historyElement.meal === meal);
   }
 
-  async getHistoryByDayAndMeal(day: Days, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
+  async getHistoryByDayAndMeal(day: string, meal: "lunch" | "dinner"): Promise<MealHistoryElement[]> {
     return this.history.filter(historyElement => historyElement.day === day && historyElement.meal === meal);
   }
 }

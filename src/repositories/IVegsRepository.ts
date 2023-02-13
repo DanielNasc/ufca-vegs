@@ -2,7 +2,7 @@ import { Vegetarian } from "@prisma/client";
 import { Days } from "../utils/types";
 
 export interface IReservation {
-  day: Days;
+  day: string;
   meal: "lunch" | "dinner";
 }
 
@@ -18,7 +18,7 @@ export interface IUpdateCardPropsDTO {
 
 export interface IAddUnusualReservationProps {
   card: number;
-  day: Days;
+  day: string;
   meal: "lunch" | "dinner";
   will_come: boolean;
 }

@@ -113,9 +113,9 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     return reservations.length
   }
 
-  async checkIfVegWillComeInMeal({ day, id, meal }: IAddNewReservation): Promise<boolean | null> {
+  async checkIfVegWillComeInMeal({ day, user_id, meal }: IAddNewReservation): Promise<boolean | null> {
     const reservation = this.stupidDatabase.find(
-      reservation => reservation.user_id === id && reservation.day === day && reservation.meal === meal
+      reservation => reservation.user_id === user_id && reservation.day === day && reservation.meal === meal
     )
 
     if (!reservation) return null
@@ -169,7 +169,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     )
   }
 
-  async saveToHistory(id: string, meal: "lunch" | "dinner", day: Days, did_come: boolean): Promise<void> {
+  async saveToHistory(id: string, meal: "lunch" | "dinner", day: string, did_come: boolean): Promise<void> {
     const reservation = this.stupidDatabase.find(
       reservation => reservation.user_id === id && reservation.day === day && reservation.meal === meal
     )
