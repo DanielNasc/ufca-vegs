@@ -18,6 +18,14 @@ fi
 # Install dependencies
 cd ./ufca-vegs-frontend/
 npm i
+
+if [ "$dev" = "y" ]; then
+    echo "provide the backend url: "
+    read backend_url
+    # substitute the backend url in the .env file
+    sed -i "s|VITE_SOCKET_URL=.*|VITE_SOCKET_URL=$backend_url|g" .env
+fi
+
 npm run build
 cd ..
 
