@@ -1,0 +1,3 @@
+[submodule "ufca-vegs-frontend"]
+	path = ufca-vegs-frontend
+	url = git@github.com:DanielNasc/ufca-vegs-frontend.git

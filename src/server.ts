@@ -2,9 +2,10 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 import express, { NextFunction, Request, Response } from "express";
-import http from "http";
+import http from "node:http";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "node:path" 
 
 import "express-async-errors";
 
@@ -30,6 +31,9 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(router);
+app.use(express.static(path.join(__dirname, "../ufca-vegs-frontend/dist")))
+
+app.get("/", (_, res) => res.sendFile(path.join(__dirname, "../ufca-vegs-frontend/dist")))
 
 app.use(
   (err: Error | AppError, _: Request, res: Response, __: NextFunction) => {
