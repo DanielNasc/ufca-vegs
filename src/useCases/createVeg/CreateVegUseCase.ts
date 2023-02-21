@@ -1,9 +1,7 @@
 import { AppError } from "../../errors/AppError";
 import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
 import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
-import { getDayAndHour } from "../../utils/getDayAndHour";
-import { getMeal } from "../../utils/getMeal";
-import { Days } from "../../utils/types";
+import { MealProvider } from "../../utils/MealProvider";
 
 interface IRequestReservation {
   day: string;
@@ -27,8 +25,8 @@ export class CreateVegUseCase {
       throw new AppError("This card is already in use", 409);
 
     const user_id = await this.vegsRepository.createVeg({ card, name }); // cria novo vegetariano
-    const { day, hour } = getDayAndHour();
-    const meal = getMeal(hour);
+    
+    const currentMeal = MealProvider.getInstance().getMeal(); // pega a refeição atual
 
     let willComeToday = false;
 
@@ -39,7 +37,7 @@ export class CreateVegUseCase {
         day: reservation.day
       })
 
-      if (reservation.day === day && reservation.meal === meal)
+      if (reservation.day === currentMeal?.day && reservation.meal === currentMeal?.meal)
         willComeToday = true;
     }
 

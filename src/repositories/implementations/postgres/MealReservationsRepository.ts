@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { getDayAndHour } from "../../../utils/getDayAndHour";
-import { getMeal } from "../../../utils/getMeal";
+import { MealProvider } from "../../../utils/MealProvider";
 import { Days } from "../../../utils/types";
 
 import {
@@ -163,17 +162,13 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     // a hora de almoço é de 11:00 às 14:00
     // a hora do jantar é de 17:00 às 20:00
     // se não estiver dentro desses horários, retorna null
-    const { day, hour } = getDayAndHour();
-    const meal = getMeal(hour);
-    // data que a refeição começou (11:00 de hoje ou 17:00 de hoje)
-    const meal_start_date = new Date();
-    meal_start_date.setHours(meal === "lunch" ? 1 : 14, 0, 0, 0);
+    const currentMeal = MealProvider.getInstance().getMeal();
+
+    if (!currentMeal) return null;
+    const { day, meal, meal_start_date } = currentMeal;
 
     // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
 
-    const meal_start_date_sql_string = `${meal_start_date.getFullYear()}-${
-      meal_start_date.getMonth() + 1
-    }-${meal_start_date.getDate()} ${meal_start_date.getHours()}:${meal_start_date.getMinutes()}:${meal_start_date.getSeconds()}`;
 
     // se estiver dentro do horário, conta quantos vegetarianos irão comer
     // não conta os vegetarianos que já comeram (histórico)
@@ -237,11 +232,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     // return parseInt(count[0].count)
   }
 
-  async checkIfVegWillComeInMeal({
-    day,
-    meal,
-    user_id,
-  }: IAddNewReservation): Promise<boolean | null> {
+  async checkIfVegWillComeInMeal(props: IAddNewReservation | null): Promise<boolean | null> {
+    if (!props) return null;
+
+    const { user_id, day, meal } = props;
+
     // verifica se o veg irá comer
     const reservation = await prisma.mealReservation.findFirst({
       where: {
@@ -286,7 +281,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 
   async saveToHistory(
     user_id: string,
-    meal: "lunch" | "dinner",
+    meal: string,
     day: string,
     did_come: boolean
   ): Promise<void> {
@@ -321,12 +316,10 @@ export class MealReservationsRepository implements IMealReservationsRepository {
   }
 
   async incrementAbsences(): Promise<void> {
-    const { day, hour } = getDayAndHour();
+    const currentMeal = MealProvider.getInstance().getMeal();
 
-    const meal = getMeal(hour);
-
-    const meal_start_date = new Date();
-    meal_start_date.setHours(meal === "lunch" ? 1 : 14, 0, 0, 0);
+    if (!currentMeal) return;
+    const { day, meal, meal_start_date } = currentMeal;
 
     // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3)
 
@@ -359,8 +352,10 @@ export class MealReservationsRepository implements IMealReservationsRepository {
   }
 
   async clearDatabase(): Promise<void> {
-    const { day, hour } = getDayAndHour();
-    const meal = getMeal(hour);
+    const currentMeal = MealProvider.getInstance().getMeal();
+
+    if (!currentMeal) return;
+    const { day, meal } = currentMeal;
 
     await this.incrementAbsences();
 

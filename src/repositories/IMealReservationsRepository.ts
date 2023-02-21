@@ -2,7 +2,7 @@ import { Days } from "../utils/types";
 
 export interface IMealAndDay {
   day: string;
-  meal: "lunch" | "dinner"
+  meal: string;
 }
 
 export type ScheduleTable = {
@@ -17,7 +17,7 @@ export type IAddNewReservation = { user_id: string } & IMealAndDay
 export interface IAddNewUnusualReservation {
   user_id: string,
   day: string,
-  meal: "lunch" | "dinner",
+  meal: string
   will_come: boolean
   is_permanent: boolean
 }
@@ -26,7 +26,7 @@ export interface IMealReservationsRepository {
   addNewReservation(props: IAddNewReservation): Promise<void>;
   addNewUnusualReservation(props: IAddNewUnusualReservation): Promise<boolean>;
   countActiveVegs(props: IMealAndDay): Promise<number | null>; // conta quantos vegetarianos irão comer
-  checkIfVegWillComeInMeal(props: IAddNewReservation): Promise<boolean | null>; // verifica se o veg irá comer
+  checkIfVegWillComeInMeal(props: IAddNewReservation | null): Promise<boolean | null>; // verifica se o veg irá comer
   sendScheduleTableOfVeg(id: string): Promise<ScheduleTable>;
   saveToHistory(id: string, meal: "lunch" | "dinner", day: string, did_come: boolean): Promise<void>;
   clearDatabase(): Promise<void>
