@@ -1,5 +1,5 @@
 type CurrentMeal = {
-    meal: string;
+    meal: "lunch" | "dinner";
     day: string;
     meal_start_date: Date;
 } | null;

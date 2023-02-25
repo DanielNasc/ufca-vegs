@@ -1,6 +1,5 @@
 import { MealReservation } from "../../../model/MealReservation";
-import { getDayAndHour } from "../../../utils/getDayAndHour";
-import { getMeal } from "../../../utils/getMeal";
+import { MealProvider } from "../../../utils/MealProvider";
 import { Days } from "../../../utils/types";
 import { IMealHistoryRepository } from "../../IMealHistoryRepository";
 // import { Days } from "../../utils/types";
@@ -81,16 +80,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
   }
 
   async countActiveVegs(): Promise<number | null> {
-    // a hora de almoço é de 11:00 às 14:00
-    // a hora do jantar é de 17:00 às 20:00
-    // se não estiver dentro desses horários, retorna null
-    const { day, hour } = getDayAndHour()
-    const meal = getMeal(hour)
-    // data que a refeição começou (11:00 de hoje ou 17:00 de hoje)
-    const meal_start_date = new Date()
-    meal_start_date.setHours(meal === "lunch" ? 1 : 17, 0, 0, 0)
+    const currentMeal = MealProvider.getInstance().getMeal();
 
-    // if (hour < meal_start_date.getHours() || hour > meal_start_date.getHours() + 3) return null
+    if (!currentMeal) return null
+
+    const { day, meal, meal_start_date } = currentMeal;
 
     const reservations = this.stupidDatabase.filter(
       reservation => reservation.day === day && reservation.meal === meal && reservation.will_come
@@ -138,8 +132,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
   }
 
   async clearDatabase(): Promise<void> {
-    const { day, hour } = getDayAndHour()
-    const meal = getMeal(hour)
+    const currentMeal = MealProvider.getInstance().getMeal();
+
+    if (!currentMeal) return
+
+    const { day, meal } = currentMeal;
 
     this.stupidDatabase = this.stupidDatabase
       // joga fora as reservas temporarias da refeição atual que o usuario não fixo disse que iria

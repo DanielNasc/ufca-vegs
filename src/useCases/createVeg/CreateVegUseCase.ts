@@ -1,6 +1,6 @@
 import { AppError } from "../../errors/AppError";
-import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
-import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
+import { IMealReservationsRepository } from "../../repositories/IMealReservationsRepository";
+import { IVegsRepository } from "../../repositories/IVegsRepository";
 import { MealProvider } from "../../utils/MealProvider";
 
 interface IRequestReservation {
@@ -16,8 +16,8 @@ interface ICreateVegProps {
 
 export class CreateVegUseCase {
   constructor(
-    private vegsRepository: VegsRepository,
-    private mealReservationsRepository: MealReservationsRepository
+    private vegsRepository: IVegsRepository,
+    private mealReservationsRepository: IMealReservationsRepository
   ) { }
 
   async execute({ card, name, schedule }: ICreateVegProps): Promise<boolean> {
