@@ -1,14 +1,13 @@
+import http from "node:http";
 import { Server } from "socket.io";
-import http from "http";
-import { getDayAndHour } from "../../utils/getDayAndHour";
+
 import { MealReservationsRepository } from "../../repositories/implementations/postgres/MealReservationsRepository";
-import { getMeal } from "../../utils/getMeal";
 import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
 import { MealHistoryRepository } from "../../repositories/implementations/postgres/MealHistoryRepository";
+import { MealProvider } from "../../utils/MealProvider";
 
 const mealReservationsRepository = new MealReservationsRepository();
 const vegsRepository = new VegsRepository();
-const mealHistoryRepository = new MealHistoryRepository();
 
 export class SocketIoService {
   private io: Server | undefined;
@@ -29,9 +28,21 @@ export class SocketIoService {
     this.io.on("connect", (socket) => {
       console.log("user connected");
 
+      socket.on("init", async () => {
+        MealProvider.getInstance().enableMeal();
+        const counter = await mealReservationsRepository.countActiveVegs();
+
+        if (counter !== null) {
+          this.broadcast("initialized", {counter});
+        }
+      })
+
       socket.on("one passed", async (card) => {
-        const { day, hour } = getDayAndHour();
-        const meal = getMeal(hour);
+        const currentMeal = MealProvider.getInstance().getMeal();
+
+        if (!currentMeal) return;
+        const { day, meal } = currentMeal;
+
         const user_id = await vegsRepository.getIdByCard(parseInt(card));
 
         if (!user_id) return;
@@ -45,10 +56,11 @@ export class SocketIoService {
         this.broadcast("decrement");
       });
 
-      socket.on("clear", async () => {
+      socket.on("terminate", async () => {
         await mealReservationsRepository.clearDatabase();
-        this.broadcast("cleaned");
-      });
+        MealProvider.getInstance().disableMeal();
+        this.broadcast("terminated");
+      })
     });
   }
 
@@ -60,9 +72,14 @@ export class SocketIoService {
     return this.INSTANCE;
   }
 
-  broadcast(msg: string) {
+  broadcast(msg: string, data?: any) {
     if (!this.io) {
       throw new Error("IO not initialized");
+    }
+
+    if (data) {
+      this.io.emit(msg, data);
+      return;
     }
 
     this.io.emit(msg);

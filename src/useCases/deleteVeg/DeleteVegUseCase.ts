@@ -1,7 +1,6 @@
 import { IMealReservationsRepository } from "../../repositories/IMealReservationsRepository";
 import { VegsRepository } from "../../repositories/implementations/postgres/VegsRepository";
-import { getDayAndHour } from "../../utils/getDayAndHour";
-import { getMeal } from "../../utils/getMeal";
+import { MealProvider } from "../../utils/MealProvider";
 
 export class DeleteVegUseCase {
 	constructor(
@@ -10,15 +9,14 @@ export class DeleteVegUseCase {
 	) { }
 
 	async execute(card: number): Promise<boolean> {
-		const { day, hour } = getDayAndHour()
-		const meal = getMeal(hour)
+		const currentMeal = MealProvider.getInstance().getMeal();
 
 		const user_id = await this.vegsRepository.getIdByCard(card);
 
 		if (!user_id)
 			throw new Error("this veg doesnt exist");
 
-		const vegWillCome = await this.mealReservationsRepository.checkIfVegWillComeInMeal({ user_id, day, meal });
+		const vegWillCome = await this.mealReservationsRepository.checkIfVegWillComeInMeal(currentMeal ? { user_id, ...currentMeal } : null);
 
 		await this.vegsRepository.removeVeg(user_id);
 
