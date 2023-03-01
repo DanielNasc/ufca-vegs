@@ -21,10 +21,10 @@ export class MealProvider {
         const hour = newDate.getHours();
         const day = newDate.toLocaleDateString("en", {weekday: "short"}).toLocaleLowerCase();
 
-        if (hour >= 11 && hour < 14) {
+        if (hour < 14) { // hour >= 11 && 
             const meal_start_date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), 11, 0, 0);
             this.currentMeal = {meal: "lunch", day, meal_start_date};
-        } else if (hour >= 17 && hour < 20) {
+        } else { // if (hour >= 17 && hour < 20) {
             const meal_start_date = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate(), 17, 0, 0);
             this.currentMeal = {meal: "dinner", day, meal_start_date};
         }
