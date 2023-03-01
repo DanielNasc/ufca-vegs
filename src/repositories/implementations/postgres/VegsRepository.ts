@@ -40,6 +40,16 @@ export class VegsRepository implements IVegsRepository {
     return i ? i.id : undefined;
   }
 
+  async getVegByCard(card: number): Promise<Vegetarian | null> {
+    const veg = await prisma.vegetarian.findFirst({
+      where: {
+        card
+      }
+    })
+
+    return veg;
+  }
+
   async getById(id: string): Promise<Vegetarian | null> {
     const veg = await prisma.vegetarian.findUnique({
       where: {
@@ -67,6 +77,34 @@ export class VegsRepository implements IVegsRepository {
       },
       data: {
         card
+      }
+    })
+  }
+
+  async decrementAbsences(id: string): Promise<void> {
+    // só decrementa se o numero de faltas for maior que 0
+    await prisma.vegetarian.updateMany({
+      where: {
+        id,
+        absences: {
+          gt: 0
+        }
+      },
+      data: {
+        absences: {
+          decrement: 1
+        }
+      }
+    })
+  }
+
+  async resetAbsences(id: string): Promise<void> {
+    await prisma.vegetarian.update({
+      where: {
+        id
+      },
+      data: {
+        absences: 0
       }
     })
   }

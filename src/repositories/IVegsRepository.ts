@@ -27,7 +27,10 @@ export interface IVegsRepository {
   listAllVegs(): Promise<Partial<Vegetarian>[]>; // manda todos os vegs
   createVeg(props: ICreateVegDTO): Promise<string>; // cria novo obj p um vegetariano
   getIdByCard(card: number): Promise<string | undefined>;
+  getVegByCard(card: number): Promise<Vegetarian | null>;
   getById(id: string): Promise<Vegetarian | null>;
   removeVeg(id: string): Promise<void>; // remove o vegetariano do banco de dados
   updateCard({ id, card }: IUpdateCardPropsDTO): Promise<void>; // atualiza o numero do cartao de um veg
+  decrementAbsences(id: string): Promise<void>; // decrementa o numero de faltas
+  resetAbsences(id: string): Promise<void>; // zera o numero de faltas
 }
