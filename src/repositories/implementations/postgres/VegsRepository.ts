@@ -70,14 +70,14 @@ export class VegsRepository implements IVegsRepository {
     })
   }
 
-  async updateCard({ id, card }: IUpdateCardPropsDTO): Promise<void> // atualiza o numero do cartao de um veg
+  async updateCard({ old_card, new_card }: IUpdateCardPropsDTO): Promise<void> // atualiza o numero do cartao de um veg
   {
     await prisma.vegetarian.update({
       where: {
-        id
+        card: old_card
       },
       data: {
-        card
+        card: new_card
       }
     })
   }

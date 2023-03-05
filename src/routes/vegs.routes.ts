@@ -8,6 +8,7 @@ import { decrementAbsencesController } from "../useCases/decrementAbsences";
 import { deleteVegController } from "../useCases/deleteVeg";
 import { getScheduleTableController } from "../useCases/GetScheduleTable";
 import { listAllVegsController } from "../useCases/listAllVegs";
+import { updateVegCardController } from "../useCases/updateVegCard";
 
 const vegsRouter = Router();
 
@@ -19,6 +20,8 @@ vegsRouter.post("/", ensureAuthenticated, (req, res) => createVegController.hand
 vegsRouter.post("/unusual", ensureAuthenticated, (req, res) => createUnusualReservationController.handle(req, res));
 
 vegsRouter.put("/decrementabsences/:card", ensureAuthenticated, (req, res) => decrementAbsencesController.handle(req, res));
+
+vegsRouter.patch("/card", (req, res) => updateVegCardController.handle(req, res))
 
 vegsRouter.delete("/", ensureAuthenticated, (req, res) => deleteVegController.handle(req, res));
 

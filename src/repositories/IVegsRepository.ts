@@ -1,5 +1,4 @@
 import { Vegetarian } from "@prisma/client";
-import { Days } from "../utils/types";
 
 export interface IReservation {
   day: string;
@@ -12,8 +11,8 @@ export interface ICreateVegDTO {
 }
 
 export interface IUpdateCardPropsDTO {
-  id: string;
-  card: number;
+  old_card: number;
+  new_card: number;
 }
 
 export interface IAddUnusualReservationProps {
@@ -30,7 +29,7 @@ export interface IVegsRepository {
   getVegByCard(card: number): Promise<Vegetarian | null>;
   getById(id: string): Promise<Vegetarian | null>;
   removeVeg(id: string): Promise<void>; // remove o vegetariano do banco de dados
-  updateCard({ id, card }: IUpdateCardPropsDTO): Promise<void>; // atualiza o numero do cartao de um veg
+  updateCard(props: IUpdateCardPropsDTO): Promise<void>; // atualiza o numero do cartao de um veg
   decrementAbsences(id: string): Promise<void>; // decrementa o numero de faltas
   resetAbsences(id: string): Promise<void>; // zera o numero de faltas
   incrementAttendance(id: string): Promise<void>; // incrementa o numero de presencas
