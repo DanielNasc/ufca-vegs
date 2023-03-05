@@ -12,7 +12,8 @@ export class VegsRepository implements IVegsRepository {
       select: {
         absences: true,
         card: true,
-        name: true
+        name: true,
+        attendances: true
       }
     });
 
@@ -105,6 +106,19 @@ export class VegsRepository implements IVegsRepository {
       },
       data: {
         absences: 0
+      }
+    })
+  }
+
+  async incrementAttendance(id: string): Promise<void> {
+    await prisma.vegetarian.update({
+      where: {
+        id
+      },
+      data: {
+        attendances: {
+          increment: 1
+        }
       }
     })
   }

@@ -15,6 +15,7 @@ model Vegetarian {
   name             String               @db.VarChar(255)
   card             Int
   absences         Int                  @default(0)
+  attendances      Int                  @default(0)
   created_at       DateTime             @default(now())
   MealReservations MealReservation[]
   MealHistory      MealHistoryElement[]

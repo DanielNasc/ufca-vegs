@@ -53,6 +53,9 @@ export class SocketIoService {
           day,
           true
         );
+
+        await vegsRepository.incrementAttendance(user_id);
+
         this.broadcast("decrement");
       });
 
