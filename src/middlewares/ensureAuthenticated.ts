@@ -15,9 +15,13 @@ export async function ensureAuthenticated(req: Request, _: Response, next: NextF
   try {
     const { id } = verify(token, process.env.JWT_SECRET as string) as IPayload;
 
-    const adminsRepository = new AdminsRepository()
+    const adminsRepository = new AdminsRepository();
 
-    if (!(await adminsRepository.getById(id))) throw new AppError("Invalid token", 401);
+    const admin = await adminsRepository.getById(id);
+
+    if (!(admin)) throw new AppError("Invalid token", 401);
+
+    req.admin = admin
 
     return next()
   } catch {
