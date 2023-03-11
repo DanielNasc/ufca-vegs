@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
 import { MealHistoryElement } from "../../../model/MealHistoryElement";
-import { Days } from "../../../utils/types";
 import { IMealHistoryRepository } from "../../IMealHistoryRepository";
 
 const prismaClient = new PrismaClient();

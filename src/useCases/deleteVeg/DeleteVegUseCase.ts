@@ -16,10 +16,14 @@ export class DeleteVegUseCase {
 		if (!user_id)
 			throw new Error("this veg doesnt exist");
 
-		const vegWillCome = await this.mealReservationsRepository.checkIfVegWillComeInMeal(currentMeal ? { user_id, ...currentMeal } : null);
+		let vegWillCome = false;
+
+		if (currentMeal) {
+			vegWillCome = !!(await this.mealReservationsRepository.checkIfVegWillComeInMeal({ user_id, ...currentMeal }))
+		}
 
 		await this.vegsRepository.removeVeg(user_id);
 
-		return !!vegWillCome;
+		return vegWillCome;
 	}
 }

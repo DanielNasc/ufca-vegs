@@ -23,6 +23,6 @@ vegsRouter.put("/decrementabsences/:card", ensureAuthenticated, (req, res) => de
 
 vegsRouter.patch("/card", (req, res) => updateVegCardController.handle(req, res))
 
-vegsRouter.delete("/", ensureAuthenticated, (req, res) => deleteVegController.handle(req, res));
+vegsRouter.delete("/:card", ensureAuthenticated, (req, res) => deleteVegController.handle(req, res));
 
 export { vegsRouter };

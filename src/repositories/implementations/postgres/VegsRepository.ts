@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, Vegetarian } from "@prisma/client";
+import { PrismaClient, Vegetarian } from "@prisma/client";
 
 // import { Veg } from "../../../model/Veg";
 import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../../IVegsRepository";

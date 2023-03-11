@@ -256,6 +256,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     const user_reservations = await prisma.mealReservation.findMany({
       where: {
         user_id: id,
+        
       },
     });
 
