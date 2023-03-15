@@ -63,6 +63,18 @@ export class VegsRepository implements IVegsRepository {
 
   async removeVeg(id: string): Promise<void> // remove o vegetariano do banco de dados
   {
+    prisma.mealReservation.deleteMany({
+      where: {
+        user_id: id
+      }
+    })
+
+    await prisma.mealReservation.deleteMany({
+      where: {
+        user_id: id
+      }
+    })
+
     await prisma.vegetarian.delete({
       where: {
         id
