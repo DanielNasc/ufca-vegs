@@ -6,6 +6,7 @@ import {
   IAddNewReservation,
   IAddNewUnusualReservation,
   IMealReservationsRepository,
+  ISendScheduleTableOfVeg,
   ScheduleTable,
 } from "../../IMealReservationsRepository";
 
@@ -251,8 +252,8 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     return reservation.will_come;
   }
 
-  async sendScheduleTableOfVeg(id: string): Promise<ScheduleTable> {
-    const schedule_table: ScheduleTable = {} as ScheduleTable;
+  async sendScheduleTableOfVeg(id: string): Promise<ISendScheduleTableOfVeg> {
+    const schedule_table: ISendScheduleTableOfVeg = {} as ISendScheduleTableOfVeg;
     const user_reservations = await prisma.mealReservation.findMany({
       where: {
         user_id: id,
@@ -260,22 +261,33 @@ export class MealReservationsRepository implements IMealReservationsRepository {
       },
     });
 
-    for (const day of DAYS) {
-      schedule_table[day] = {
-        lunch: !!user_reservations.find(
-          (reservation) =>
-            reservation.day === day &&
-            reservation.meal === "lunch" &&
-            reservation.will_come
-        ),
-        dinner: !!user_reservations.find(
-          (reservation) =>
-            reservation.day === day &&
-            reservation.meal === "dinner" &&
-            reservation.will_come
-        ),
+    function get_data(day: string, meal: string) {
+      const user_reservation = user_reservations.find(
+        (reservation) =>
+          reservation.day === day &&
+          reservation.meal === meal
+      );
+
+      if (!user_reservation) return {
+        is_permanent: true,
+        will_come: false,
+      }
+
+      return {
+        is_permanent: user_reservation.is_fixed,
+        will_come: user_reservation.will_come,
       };
     }
+
+    for (const day of DAYS) {
+      schedule_table[day] = {
+        lunch: get_data(day, "lunch"),
+        dinner: get_data(day, "dinner")
+      };
+    }
+
+    // console.log(schedule_table);
+    
 
     return schedule_table;
   }
