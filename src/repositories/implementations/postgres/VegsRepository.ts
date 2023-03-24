@@ -20,6 +20,26 @@ export class VegsRepository implements IVegsRepository {
     return vegs;
   }
 
+  async vegsWithNameLike(name: string): Promise<Partial<Vegetarian>[]> {
+    const vegs = await prisma.vegetarian.findMany({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive'
+        }
+      },
+      select: {
+        name: true,
+        card: true,
+        absences: true,
+        attendances: true
+      }
+    })
+
+
+    return vegs;
+  }
+
   async createVeg({ card, name }: ICreateVegDTO): Promise<string> // cria novo obj p um vegetariano
   {
     const newVeg = await prisma.vegetarian.create({

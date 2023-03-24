@@ -7,6 +7,7 @@ import { createVegController } from "../useCases/createVeg";
 import { decrementAbsencesController } from "../useCases/decrementAbsences";
 import { deleteVegController } from "../useCases/deleteVeg";
 import { getScheduleTableController } from "../useCases/GetScheduleTable";
+import { getVegsWithNameLikeController } from "../useCases/getVegsWithNameLike";
 import { listAllVegsController } from "../useCases/listAllVegs";
 import { updateVegCardController } from "../useCases/updateVegCard";
 
@@ -15,6 +16,7 @@ const vegsRouter = Router();
 vegsRouter.get("/", (_, res) => listAllVegsController.handle(res));
 vegsRouter.get("/count", (_, res) => countActiveVegsController.handle(res));
 vegsRouter.get("/scheduletable/:card", (req, res) => getScheduleTableController.handle(req, res));
+vegsRouter.get("/search/:name", ensureAuthenticated, (req, res) => getVegsWithNameLikeController.handle(req, res));
 
 vegsRouter.post("/", ensureAuthenticated, (req, res) => createVegController.handle(req, res));
 vegsRouter.post("/unusual", ensureAuthenticated, (req, res) => createUnusualReservationController.handle(req, res));

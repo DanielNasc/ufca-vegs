@@ -24,6 +24,7 @@ export interface IAddUnusualReservationProps {
 
 export interface IVegsRepository {
   listAllVegs(): Promise<Partial<Vegetarian>[]>; // manda todos os vegs
+  vegsWithNameLike(name: string): Promise<Partial<Vegetarian>[]>; // manda todos os vegs com nome parecido
   createVeg(props: ICreateVegDTO): Promise<string>; // cria novo obj p um vegetariano
   getIdByCard(card: number): Promise<string | undefined>;
   getVegByCard(card: number): Promise<Vegetarian | null>;
