@@ -18,4 +18,8 @@ adminsRouter.get("/verify", ensureAuthenticated, (req, res) => {
     })
 })
 
+adminsRouter.get("/default-profile-picture", (req, res) => {
+    return res.sendFile("UFCA_LOGO.png", { root: "public" })
+})
+
 export { adminsRouter }

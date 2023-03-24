@@ -18,7 +18,7 @@ export interface ISendScheduleTableOfVeg {
     [meal: string]: {
       is_permanent: boolean;
       will_come: boolean;
-    } | null;
+    }
   }
 }
 

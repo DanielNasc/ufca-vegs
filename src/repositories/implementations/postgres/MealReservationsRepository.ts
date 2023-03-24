@@ -143,8 +143,11 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     }
 
     // só retorna true se o veg não tiver um registro no histórico dessa refeição
-    const meal_start_date = new Date();
-    meal_start_date.setHours(meal === "lunch" ? 11 : 17, 0, 0, 0);
+    const curr_meal = MealProvider.getInstance().getMeal()
+
+    if (!curr_meal) {
+      return false
+    }
 
     return !(await prisma.mealHistoryElement.findFirst({
       where: {
@@ -152,7 +155,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
         meal,
         day,
         date: {
-          gte: meal_start_date,
+          gte: curr_meal.meal_start_date,
         },
       },
     }));
