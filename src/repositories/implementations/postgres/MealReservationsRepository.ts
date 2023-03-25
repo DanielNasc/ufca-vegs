@@ -7,7 +7,6 @@ import {
   IAddNewUnusualReservation,
   IMealReservationsRepository,
   ISendScheduleTableOfVeg,
-  ScheduleTable,
 } from "../../IMealReservationsRepository";
 
 const prisma = new PrismaClient();

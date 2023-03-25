@@ -14,7 +14,8 @@ export class VegsRepository implements IVegsRepository {
         absences: true,
         card: true,
         name: true,
-        attendances: true
+        attendances: true,
+        suspended: true
       }
     });
 
