@@ -1,4 +1,5 @@
 import { PrismaClient, Vegetarian } from "@prisma/client";
+import { AppError } from "../../../errors/AppError";
 
 // import { Veg } from "../../../model/Veg";
 import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../../IVegsRepository";
@@ -32,7 +33,8 @@ export class VegsRepository implements IVegsRepository {
         name: true,
         card: true,
         absences: true,
-        attendances: true
+        attendances: true,
+        suspended: true
       }
     })
 
@@ -151,6 +153,24 @@ export class VegsRepository implements IVegsRepository {
         attendances: {
           increment: 1
         }
+      }
+    })
+  }
+
+  async toggleSuspended(card: number): Promise<void> {
+    const veg = await prisma.vegetarian.findUnique({
+      where: {
+        card
+      }
+    })
+
+    if (!veg) throw new AppError("Vegetarian not found")
+
+    await prisma.vegetarian.update({
+      where: {
+        card
+      }, data: {
+        suspended: !veg.suspended
       }
     })
   }

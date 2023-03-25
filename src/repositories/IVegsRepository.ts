@@ -34,4 +34,5 @@ export interface IVegsRepository {
   decrementAbsences(id: string): Promise<void>; // decrementa o numero de faltas
   resetAbsences(id: string): Promise<void>; // zera o numero de faltas
   incrementAttendance(id: string): Promise<void>; // incrementa o numero de presencas
+  toggleSuspended(card: number): Promise<void>;
 }

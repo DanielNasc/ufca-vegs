@@ -205,6 +205,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
 
     return await prisma.vegetarian.count({
       where: {
+        suspended: false,
         MealReservations: {
           some: {
             day,
