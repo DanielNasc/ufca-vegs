@@ -1,3 +1,4 @@
+import { Vegetarian } from "@prisma/client";
 import { Veg } from "../../../model/Veg";
 import { ICreateVegDTO, IUpdateCardPropsDTO, IVegsRepository } from "../../IVegsRepository"
 
@@ -35,10 +36,10 @@ export class VegsRepository implements IVegsRepository {
     return i > -1 ? this.stupidDatabase[i].id : undefined;
   }
 
-  async getById(id: string): Promise<Veg | null> {
+  async getById(id: string): Promise<Vegetarian | null> {
     if (!id) return null
 
-    return this.stupidDatabase.find(veg => veg.id === id) ?? null;
+    return (this.stupidDatabase.find(veg => veg.id === id) ?? null) as Vegetarian | null;
   }
 
   async removeVeg(id: string): Promise<void> {
@@ -47,12 +48,20 @@ export class VegsRepository implements IVegsRepository {
     this.stupidDatabase.splice(index, 1);
   }
 
-  async updateCard({ id, card }: IUpdateCardPropsDTO): Promise<void> {
-    const veg = await this.getById(id);
+  async updateCard(props: IUpdateCardPropsDTO): Promise<void> {}
 
-    if (!veg)
-      return;
-
-    veg.card = card;
+  async vegsWithNameLike(name: string): Promise<Vegetarian[]> {
+      return {} as any;
   }
+
+  async getVegByCard(card: number): Promise<Vegetarian | null> {
+      return {} as any;
+  }
+
+  async decrementAbsences(id: string): Promise<void> {}
+
+  async resetAbsences(id: string): Promise<void> {}
+  async incrementAttendance(id: string): Promise<void> {}
+  async toggleSuspended(card: number): Promise<void> {}
+
 }

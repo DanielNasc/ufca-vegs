@@ -3,7 +3,7 @@ import { MealProvider } from "../../../utils/MealProvider";
 import { Days } from "../../../utils/types";
 import { IMealHistoryRepository } from "../../IMealHistoryRepository";
 // import { Days } from "../../utils/types";
-import { IAddNewReservation, IAddNewUnusualReservation, IMealReservationsRepository, ScheduleTable } from "../../IMealReservationsRepository";
+import { IAddNewReservation, IAddNewUnusualReservation, IMealReservationsRepository, ISendScheduleTableOfVeg, ScheduleTable } from "../../IMealReservationsRepository";
 import { MealHistoryRepository } from "./MealHistoryRepository";
 
 const DAYS: Array<Days> = ["mon", "tue", "wed", "thu", "fri"];
@@ -117,7 +117,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
     return reservation.will_come
   }
 
-  async sendScheduleTableOfVeg(id: string): Promise<ScheduleTable> {
+  async sendScheduleTableOfVeg(id: string): Promise<ISendScheduleTableOfVeg> {
     const scheduleTable = {} as ScheduleTable
     const reservations = this.stupidDatabase.filter(reservation => reservation.user_id === id)
 
@@ -128,7 +128,7 @@ export class MealReservationsRepository implements IMealReservationsRepository {
       }
     }
 
-    return scheduleTable
+    return {} as ISendScheduleTableOfVeg
   }
 
   async clearDatabase(): Promise<void> {
